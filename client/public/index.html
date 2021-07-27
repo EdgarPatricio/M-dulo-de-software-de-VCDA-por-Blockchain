@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
+    <link rel="icon" type="image/jpg" href="%PUBLIC_URL%/images/logoUNL.jpg" />
+
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta
@@ -24,11 +25,137 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    <title>React App</title>
+    <title>Validación certificados académicos | UNL</title>
+
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf" crossorigin="anonymous">
+    <meta name="viewport"
+      content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <script type="text/javascript" src="%PUBLIC_URL%/js/materialize.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@sweetalert2/theme-borderless/borderless.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@9/dist/sweetalert2.min.js"></script>
+    <style media="screen">
+      @font-face {
+        font-family: "Montserrat-Regular";
+        src: url("%PUBLIC_URL%/font/fuente/Montserrat-Regular.otf");
+      }
+
+      @font-face {
+        font-family: "Montserrat-Bold";
+        src: url("%PUBLIC_URL%/font/fuente/Montserrat-Bold.otf");
+      }
+    </style>
+
+    <link type="text/css" rel="stylesheet" href="%PUBLIC_URL%/css/materialize.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="%PUBLIC_URL%/css/animate.css" media="screen,projection" />
+    <link type="text/css" rel="stylesheet" href="%PUBLIC_URL%/css/style.css" media="screen,projection" />
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
-    <div id="root"></div>
+    <div class="nav-first">
+      <a id="menu-sidenav" class="sidenav-trigger" data-target="slide-out">
+          <i class="fas fa-bars"></i>
+      </a>
+      <ul class="white-text">
+          <li><a href="https://evaluaciondocente.unl.edu.ec/" target="blank" rel="noreferrer noopener">Evaluación Docente</a></li>
+          <li>|</li>
+          <li><a href="https://eva.unl.edu.ec/" target="_blank" rel="noreferrer noopener"> EVA UNL</a></li>
+          <li>|</li>
+          <li><a href="https://docentes.unl.edu.ec/" target="blank" rel="noreferrer noopener"> SGA Docentes</a></li>
+          <li>|</li>
+          <li><a href="https://estudiantes.unl.edu.ec/" target="blank" rel="noreferrer noopener"> SGA Estudiantes</a></li>
+          <li><a href="https://twitter.com/UNLoficial" target="blank" rel="noreferrer noopener"><i class="fab fa-twitter"></i></a></li>
+          <li><a href="https://www.facebook.com/UNLoficial/" target="blank" rel="noreferrer noopener"><i class="fab fa-facebook-f"></i></a></li>
+          <li><a href="https://www.instagram.com/unloficial/" target="blank" rel="noreferrer noopener"><i class="fab fa-instagram"></i></a></li>
+          <li><a href="https://www.youtube.com/channel/UCXMwpCdZV7QHdKBuFk3QeUw" target="blank" rel="noreferrer noopener"><i class="fab fa-youtube"></i></a></li>
+      </ul>
+  </div>
+  <div class="nav-first white">
+      <ul>
+        <li><span class="blueUNL-text">Bienvenido</span></li>
+
+      </ul>
+  </div>
+  <div id="nav">
+      <nav class="white nav-tabs shadown-none">
+          <div class="nav-wrapper container">
+              <a href="/" class="brand-logo left black-text animated bounceInLeft nav-tabs"><img
+                  style="height:70px;margin:9px 0" src="./images/unl.png" alt="">
+              </a>
+              <a id="menuHome" href="#" data-target="slide-out" class="sidenav-trigger show-on-small"><i class="fas fa-bars menu"></i></a>
+              <ul id="nav-mobile" class="right hide-on-med-and-down nav-tabs">
+                  <li><a class="active" href="/">Inicio</a></li>
+                  <li><a class="" href="">UNL</a></li>
+              </ul>
+              <ul class="sidenav" id="mobile-demo">
+
+                      <li><a class="" href="">UNL</a></li>
+              </ul>
+          </div>
+      </nav>
+  </div>
+  <main>
+    <div class="container">
+      <div class="center">
+        <h5 class="principal-title bt-40">Validación de autenticidad de los certificados académicos digitales</h5>
+        <br>
+        <br>
+        <br>
+      </div>
+      <div class="row">
+        <div class="col s12 m6">
+          <div class="row">
+            <div class="input-field">
+              <input id="first_name2" type="number" placeholder="Ingrese el número de DNI al que le pertenece el certificado digital académico" class="validate">
+              <label class="active" for="first_name2">Número de DNI:</label>
+            </div>
+            <div class="file-field input-field">
+              <div class="btn">
+                <span>Subir archivo</span>
+                <input type="file">
+              </div>
+              <div class="file-path-wrapper">
+                <input class="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text">
+              </div>
+            </div>
+
+          </div>
+          <div class="center">
+            <button type="button" class="btn btnBlueUNL" name="button">Validar autenticidad</button>
+          </div>
+        </div>
+        <div class="col s12 m1 "  ></div>
+        <div class="col s12 m1 verticalLine"></div>
+        <div class="col s12 m4 center">
+
+          <div class="row " id="root">
+            <!--
+            <div class="col s12">
+              <div class="card">
+                <div class="card-content">
+                  <span class="">El certificado digital académico es:</span> <br> <br>
+                  <img style="width: 100px" src="%PUBLIC_URL%\images\comprobado.svg" alt=""> <br>
+                  <span class="second-title-cost">Es auténtico</span>
+
+                </div>
+                <div class="card-action">
+                  <a href="#">Verificar otro documento</a>
+                </div>
+              </div>
+            </div>
+          -->
+          </div>
+
+
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+    <div ></div>
     <!--
       This HTML file is a template.
       If you open it directly in the browser, you will see an empty page.
@@ -39,5 +166,231 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
+
+
+
+
+    <footer class="page-footer blueUNL animated fadeInUpBig">
+      <div style="margin: 8% 8% 4% 8%;">
+          <div class="row">
+                  <img src="%PUBLIC_URL%/images/logo_unl_white.png" alt="">
+
+            </div>
+        <div class="row">
+          <div class="col l4 s12">
+              <p style="margin-top: 5%;">
+                  Dirección: <br>
+                  Ciudad Universitaria Guillermo Falconí <br>
+                  Loja - Ecuador <br>
+                  Teléfono: <br>
+                  Internacional +593 7 2547252 <br>
+                  Nacional: (07) 2547252 <br>
+                  Email: <br>
+                  Ubicar en el mapa:
+                  <a href="https://www.openstreetmap.org/?mlat=-4.03364&amp;mlon=-79.20311#map=17/-4.03364/-79.20311"
+                  rel="noopener noreferer" target="_blanck">Ir a google map's</a>
+
+              </p>
+          </div>
+          <div class="col l8 s12">
+              <div class="row">
+                  <div class="col l3 s3">
+                      <strong>Universidad</strong>
+                      <ul class="footer-list">
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/autoridades"
+                              target="_blank" rel="noreferrer noopener">Autoridades</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/normativa"
+                              target="_blank" rel="noreferrer noopener">Normativa</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/transparencia"
+                              target="_blank" rel="noreferrer noopener">Transparencia</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/vinculacion-con-la-sociedad"
+                              target="_blank" rel="noreferrer noopener">Vinculación</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/universidad"
+                              target="_blank" rel="noreferrer noopener">Nosotros</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/universidad/calendario-academico"
+                              target="_blank" rel="noreferrer noopener">Calendario Académico</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/contactenos"
+                              target="_blank" rel="noreferrer noopener">Directorio Institucional</a></li>
+                          <li><a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/formatos"
+                              target="_blank" rel="noreferrer noopener">Formatos y Formularios</a></li>
+                       </ul>
+                  </div>
+                  <div class="col l3 s3">
+                      <strong>Oferta academica</strong>
+                      <ul class="footer-list">
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/facultad-agropecuaria-y-de-recursos-naturales-renovables"
+                              target="_blank" rel="noreferrer noopener">Agropecuaria y de Recursos Naturales Renovables</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/unidad-de-educacion-distancia"
+                              target="_blank" rel="noreferrer noopener">Educación a Distancia</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/facultad-de-la-educacion-el-arte-y-la-comunicacion"
+                              target="_blank" rel="noreferrer noopener">Educación, el Arte y la Comunicación</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/facultad-de-la-energia-las-industrias-y-los-recursos-naturales-no-renovables"
+                              target="_blank" rel="noreferrer noopener">Energía, las Industrias y los Recursos Naturales no Renovables</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/instituto-de-idiomas"
+                              target="_blank" rel="noreferrer noopener">Instituto de Idiomas</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/facultad-juridica-social-y-administrativa"
+                              target="_blank" rel="noreferrer noopener">Jurídica, Social y Administrativa</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/posgrado-uci"
+                              target="_blank" rel="noreferrer noopener">Oferta de Posgrado</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/oferta_academica/facultad-de-la-salud-humana"
+                              target="_blank" rel="noreferrer noopener">Salud Humana</a>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="col l3 s3">
+                      <strong>Comunidad</strong>
+                      <ul class="footer-list">
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/universidad/biblioteca-virtual"
+                              target="_blank" rel="noreferrer noopener">Biblioteca Virtual</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/bienestar"
+                              target="_blank" rel="noreferrer noopener">Bienestar Universitario</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/consultorio-juridico"
+                              target="_blank" rel="noreferrer noopener">Consultorio Jurídico</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/comunidad/evaluacion-instituciona-aseguramiento-calidad"
+                              target="_blank" rel="noreferrer noopener">Evaluación Institucional y Aseguramiento de la Calidad</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/centro-de-salud-universitario-de-motupe"
+                              target="_blank" rel="noreferrer noopener">Hospital Universitario</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/hospital-veterinario"
+                              target="_blank" rel="noreferrer noopener">Hospital Veterinario</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/jardin-botanico-reinaldo-espinosa"
+                              target="_blank" rel="noreferrer noopener">Jardín Botánico</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/radio-universitaria"
+                              target="_blank" rel="noreferrer noopener">Radio Universitaria</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/servicios-tecnologicos"
+                              target="_blank" rel="noreferrer noopener">Servicios Tecnológicos</a>
+                          </li>
+                      </ul>
+                  </div>
+                  <div class="col l3 s3">
+                      <strong>Investigación</strong>
+                      <ul class="footer-list">
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/centro-de-estudios-territoriales"
+                              target="_blank" rel="noreferrer noopener"> Centro de Estudios Territoriales</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/centro-de-biotecnologia"
+                              target="_blank" rel="noreferrer noopener">Centro de Biotecnología</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/centro-de-investigaciones-tropicales-del-ambiente-y-la-biodiversidad-citiab"
+                              target="_blank" rel="noreferrer noopener">Centro de Investigaciones Tropicales del Ambiente y la Biodiversidad - CITIAB I</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/estacion-experimental-el-chilco"
+                              target="_blank" rel="noreferrer noopener">Estación Experimental El Chilco</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/estacion-experimental-el-padmi"
+                              target="_blank" rel="noreferrer noopener">Estación Experimental El Padmi</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/estacion-experimental-zapotepamba"
+                              target="_blank" rel="noreferrer noopener">Estación Experimental Zapotepamba</a>
+                          </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/herbario-reinaldo-espinosa"
+                              target="_blank" rel="noreferrer noopener">Herbario “Reinaldo Espinosa”</a>
+                          </li>
+                          <li>
+                               <a class="grey-text text-lighten-1"
+                               href="https://unl.edu.ec/investigacion/jardin-botanico-reinaldo-espinosa"
+                               target="_blank" rel="noreferrer noopener">Jardín Botánico Reinaldo Espinosa</a>
+                              </li>
+                          <li>
+                              <a class="grey-text text-lighten-1"
+                              href="https://unl.edu.ec/investigacion/laboratorio-de-analisis-quimico"
+                              target="_blank" rel="noreferrer noopener">Laboratorio de Análisis Químico</a>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+        </div>
+      </div>
+      <div class="footer-copyright">
+        <div class="container">
+          <ul class="list-icons">
+              <li><a href="https://twitter.com/UNLoficial" target="_blank" rel="noreferrer noopener"><i class="fab fa-twitter"></i></a></li>
+              <li><a href="https://www.facebook.com/UNLoficial/" target="_blank" rel="noreferrer noopener"><i class="fab fa-facebook-f"></i></a></li>
+              <li><a href="https://www.instagram.com/unloficial/" target="_blank" rel="noreferrer noopener"><i class="fab fa-instagram"></i></a></li>
+              <li><a href="https://www.youtube.com/channel/UCXMwpCdZV7QHdKBuFk3QeUw" target="_blank" rel="noreferrer noopener"><i class="fab fa-youtube"></i></a></li>
+          </ul>
+        </div>
+      </div>
+  </footer>
+
+    <!-- JavaScript and dependencies -->
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"
+      integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo"
+      crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
+      integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
+      crossorigin="anonymous"></script>
+    <script src="%PUBLIC_URL%/main.js"></script>
   </body>
 </html>

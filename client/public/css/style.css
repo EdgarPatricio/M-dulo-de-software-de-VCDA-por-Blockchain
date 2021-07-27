@@ -1,0 +1,8 @@
+.nav-first #menu-sidenav{
+    border: none;
+    font-size: 20px;
+    margin: 10px 60px;
+}
+.nav-first #menu-sidenav:hover{
+    cursor: pointer;
+}
