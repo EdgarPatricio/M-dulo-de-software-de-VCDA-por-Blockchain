@@ -1,15 +1,16 @@
 import React, { Component } from "react";
-import SimpleStorageContract from "./contracts/SimpleStorage.json";
+import StorageCDAContract from "./contracts/StorageCDA.json";
 import getWeb3 from "./getWeb3";
 
 import "./App.css";
 
 import loading from './img/loading.svg';
-import valid from './img/valid.svg';
-import invalid from './img/invalid.svg';
+//import valid from './img/valid.svg';
+//import invalid from './img/invalid.svg';
 
 class App extends Component {
-  state = { storageValue: 0, web3: null, accounts: null, contract: null };
+  //state = { dni:"1104717572", hash_cda:"012345678911118aervg1er9", web3: null, accounts: null, contract: null };
+  state = { storageDNI:null, storageHashCDA:null, web3: null, accounts: null, contract: null};
 
   componentDidMount = async () => {
     try {
@@ -21,9 +22,9 @@ class App extends Component {
 
       // Obtener la instancia del contrato.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SimpleStorageContract.networks[networkId];
+      const deployedNetwork = StorageCDAContract.networks[networkId];
       const instance = new web3.eth.Contract(
-        SimpleStorageContract.abi,
+        StorageCDAContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
@@ -43,14 +44,20 @@ class App extends Component {
     const { accounts, contract } = this.state;
 
     // Almacena un valor determinado, 5 por defecto.
-    await contract.methods.set(5).send({ from: accounts[0] });
+    await contract.methods.createCDA("1104717572","hashdelcocumento1").send({ from: accounts[0] });
 
     // Obtener el valor del contrato para demostrar que ha funcionado.
-    const response = await contract.methods.get().call();
+    const response = await contract.methods.validateCDA("1104717572","hashdelcocumento1").call();
 
     // Actualizar el estado con el resultado.
-    this.setState({ storageValue: response });
+    this.setState({ storageDNI: response });
   };
+  handleSubmit = async () =>{
+    const { dni, hash_cda} = this.state;
+    let result = await this.StorageCDAContract.methods.createCDA(dni,hash_cda).send({from: this.accounts[0]});
+    console.log(result);
+    alert("El certificado digital fue registrado en la Blockchain con éxito");
+  }
 
   render() {
     if (!this.state.web3) {
@@ -68,15 +75,59 @@ class App extends Component {
       )
     }
     return (
-      <div className="App">
-        <p>
-          If your contracts compiled and migrated successfully, below will show
-          a stored value of 5 (by default).
-        </p>
-        <p>
-          Try changing the value stored on <strong>line 42</strong> of App.js.
-        </p>
-        <div>The stored value is: {this.state.storageValue}</div>
+      <div className="container">
+        <div className="center">
+          <h5 className="principal-title bt-40">Validación de autenticidad de los certificados académicos digitales</h5>
+          <br />
+          <br />
+          <br />
+        </div>
+        <div className="row">
+          <div className="col s12 m6">
+            <div className="row">
+              <div className="input-field">
+                <input id="first_name2" type="text" name="dni" value="{this.stage.dni}" placeholder="Ingrese el número de DNI al que le pertenece el certificado digital académico" className="validate"/>
+                <label className="active" for="first_name2">Número de DNI:</label>
+              </div>
+              <div className="file-field input-field">
+                <div className="btn">
+                  <span>Subir archivo</span>
+                  <input type="file"/>
+                </div>
+                <div className="file-path-wrapper">
+                  <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text"/>
+                </div>
+              </div>
+              <div className="input-field">
+                <input id="hash256" type="number" name="hash_cda" value="{this.state.cost}" />
+                <label className="active" for="hash256">Hash del documento:</label>
+              </div>
+
+            </div>
+            <div className="center">
+              <button type="button" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
+            </div>
+          </div>
+          <div className="col s12 m1 "  ></div>
+          <div className="col s12 m1 verticalLine"></div>
+          <div className="col s12 m4 center">
+
+            <div className="row " >
+              <div className="col s12">
+                <div className="card">
+                  <div className="card-content">
+                    <span className="">El certificado digital académico es:</span> <br /> <br />
+                    <img className='img-result' src={loading} /> <br />
+                    <span className="second-title-cost">Es auténtico</span>
+                  </div>
+                  <div className="card-action">
+                    <a href="#">Verificar otro documento</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
