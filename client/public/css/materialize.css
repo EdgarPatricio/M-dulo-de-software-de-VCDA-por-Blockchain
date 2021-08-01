@@ -9190,3 +9190,11 @@ padding: 36px 0;
 .img-result{
   width: 100px;
 }
+
+.red-text-UNL {
+  color: var(--color-red);
+  font-size: 18px;
+  font-weight: normal;
+  line-height: normal;
+  margin-left: 0px;
+}
