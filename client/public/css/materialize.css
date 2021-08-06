@@ -9191,6 +9191,10 @@ padding: 36px 0;
   width: 100px;
 }
 
+.img-initial{
+  width: 200px;
+}
+
 .red-text-UNL {
   color: var(--color-red);
   font-size: 18px;

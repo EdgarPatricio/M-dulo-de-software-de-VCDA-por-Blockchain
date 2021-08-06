@@ -2,8 +2,12 @@ import React, { Component } from "react";
 import StorageCDAContract from "./contracts/StorageCDA.json";
 import getWeb3 from "./getWeb3";
 
+// Librería para generar el hash sha256
+import sha256 from "js-sha256";
+
 import "./App.css";
 
+import initial from './img/data-security.svg';
 import loading from './img/loading.svg';
 import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
@@ -52,7 +56,13 @@ class App extends Component {
   handleSubmit = async () => {
     const { storageDNI, storageHashCDA, accounts, contract } = this.state;
     const registered = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
-    if (registered == false) {
+
+    // Se comprueba que los campos no esten vacios
+    if (storageDNI === "" || storageHashCDA === "") {
+      alert("Los campos deben estar completos para registrar el certificado digital académico en la red Blockchain");
+    }
+    // Se comprueba que no este registrado
+    else if (registered === false) {
       let result = await contract.methods.createCDA(storageDNI, storageHashCDA).send({ from: accounts[0] });
       console.log(result);
       alert("El certificado digital académico se registró en la red Blockchain con éxito");
@@ -79,8 +89,12 @@ class App extends Component {
   // Función para validar si el CDA es o no autentico
   handleValidate = async () => {
     const { storageDNI, storageHashCDA, contract } = this.state;
-    const response = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
-    this.setState({ validate: response });
+    if (storageDNI === "" || storageHashCDA === "") {
+      alert("Los campos deben estar completos para validar el certificado digital académico");
+    } else {
+      const response = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
+      this.setState({ validate: response });
+    }
   };
 
   // Función para mostrar el formulario de registro
@@ -95,17 +109,56 @@ class App extends Component {
     this.setState({ showRegister: true });
   };
 
+  handleFiles = files => {
+    const storageHashCDA = this.state;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const hash = sha256(reader.result);
+      console.log(hash);
+
+    }
+    console.log(reader.result);
+    reader.readAsBinaryString(files[0]);
+    this.setState({ storageHashCDA: storageHashCDA });
+  }
+
   render() {
     const isValide = this.state.validate;
     const div_register = this.state.showRegister;
     const div_validate = this.state.showValidate;
+
+    // Método para leer el documento en formato PDF
+    const readFile = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const fileReader = new FileReader();
+
+      // El formato al que se convierte el terxto es a un String binario
+      fileReader.readAsBinaryString(file);
+
+      fileReader.onload = () => {
+        console.log(fileReader.result);
+
+        // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
+        const hash256File = sha256(fileReader.result);
+        this.setState({ storageHashCDA: hash256File });
+        console.log(hash256File);
+      }
+
+      fileReader.onerror = () => {
+        console.log(fileReader.error);
+      }
+
+    };
+    // Se compruba la conexión con web3
     if (!this.state.web3) {
       return (
         <div className="row center">
           <div className="col s12">
             <div className="card">
               <div className="card-content">
-                <img className='img-result' src={loading} /> <br />
+                <img className='img-result' src={loading} alt="Cargando Web3, cuentas, y contrato..." /> <br />
                 <span className="second-title-cost">Cargando Web3, cuentas, y contrato...</span>
               </div>
             </div>
@@ -115,9 +168,10 @@ class App extends Component {
     }
     return (
       <div className="container">
+
+        {/* Sección de título */}
         <div className="center">
           <h5 className="principal-title bt-40">Validación de autenticidad de los certificados académicos digitales</h5>
-          <br />
           <br />
           <br />
         </div>
@@ -126,7 +180,14 @@ class App extends Component {
         <br />
         <br />
         <div className="row">
-          {div_register == true &&
+          <div>
+            <span>Complete los campos adecuadamente:</span>
+            <br />
+            <br />
+          </div>
+
+          {/* Sección de registro de CDA */}
+          {div_register === true &&
             <div className="col s12 m6">
               <div className="row">
                 <div className="input-field">
@@ -135,12 +196,12 @@ class App extends Component {
                 </div>
                 <div className="input-field">
                   <label className="active">Hash del documento:</label>
-                  <input type="text" id="output" name="storageHashCDA" value={this.state.storageHashCDA} onChange={this.handleInputChange} />
+                  <input type="text" id="output" name="storageHashCDA" disabled={true} value={this.state.storageHashCDA} onChange={this.handleInputChange} />
                 </div>
                 <div className="file-field input-field">
                   <div className="btn">
                     <span>Subir archivo</span>
-                    <input type="file" id="inputfile" name="inputfile" />
+                    <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
                   </div>
                   <div className="file-path-wrapper">
                     <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
@@ -154,21 +215,18 @@ class App extends Component {
             </div>
           }
 
-          {div_validate == true &&
+          {/* Sección de validación de CDA */}
+          {div_validate === true &&
             <div className="col s12 m6">
               <div className="row">
                 <div className="input-field">
                   <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
                   <label className="active">Número de DNI:</label>
                 </div>
-                <div className="input-field">
-                  <label className="active">Hash del documento:</label>
-                  <input type="text" id="output" name="storageHashCDA" value={this.state.storageHashCDA} onChange={this.handleInputChange} />
-                </div>
                 <div className="file-field input-field">
                   <div className="btn">
                     <span>Subir archivo</span>
-                    <input type="file" id="inputfile" name="inputfile" />
+                    <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
                   </div>
                   <div className="file-path-wrapper">
                     <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
@@ -182,28 +240,26 @@ class App extends Component {
           }
           <div className="col s12 m1 "  ></div>
           <div className="col s12 m1 verticalLine"></div>
-          {isValide == null &&
+
+          {/* Sección de registro de CDA */}
+          {isValide === null &&
             <div className="col s12 m4 center">
-              <div className="row " >
-                <div className="col s12">
-                  <div className="card">
-                    <div className="card-content">
-                      <img className='img-result' src={loading} /> <br />
-                      <span className="second-title-cost">Esperando ...</span>
-                    </div>
-                  </div>
-                </div>
+              <div className="card-content">
+                <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
+                <span className="second-title-cost">El sistema esta listo</span>
               </div>
             </div>
           }
-          {isValide == true &&
+
+          {/* Sección de registro de CDA */}
+          {isValide === true &&
             <div className="col s12 m4 center">
               <div className="row " >
                 <div className="col s12">
                   <div className="card">
                     <div className="card-content">
                       <span className="">El certificado digital académico:</span> <br /> <br />
-                      <img className='img-result' src={valid} /> <br />
+                      <img className='img-result' src={valid} alt="" /> <br />
                       <span className="second-title-cost">Es auténtico</span>
                     </div>
                     <div className="card-action">
@@ -214,14 +270,14 @@ class App extends Component {
               </div>
             </div>
           }
-          {isValide == false &&
+          {isValide === false &&
             <div className="col s12 m4 center">
               <div className="row " >
                 <div className="col s12">
                   <div className="card">
                     <div className="card-content">
                       <span className="">El certificado digital académico:</span> <br /> <br />
-                      <img className='img-result' src={invalid} /> <br />
+                      <img className='img-result' src={invalid} alt="" /> <br />
                       <span className="red-text-UNL">No es auténtico</span>
                     </div>
                     <div className="card-action">
