@@ -109,19 +109,6 @@ class App extends Component {
     this.setState({ showRegister: true });
   };
 
-  handleFiles = files => {
-    const storageHashCDA = this.state;
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      const hash = sha256(reader.result);
-      console.log(hash);
-
-    }
-    console.log(reader.result);
-    reader.readAsBinaryString(files[0]);
-    this.setState({ storageHashCDA: storageHashCDA });
-  }
-
   render() {
     const isValide = this.state.validate;
     const div_register = this.state.showRegister;
