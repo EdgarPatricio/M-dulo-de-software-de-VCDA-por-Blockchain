@@ -101,12 +101,16 @@ class App extends Component {
   handleChangeValidate = async () => {
     this.setState({ showValidate: true });
     this.setState({ showRegister: false });
+    this.setState({ storageDNI: "" });
+    this.setState({ storageHashCDA: "" });
   };
 
   // Función para mostrar el formulario de validación
   handleChangeRegister = async () => {
     this.setState({ showValidate: false });
     this.setState({ showRegister: true });
+    this.setState({ storageDNI: "" });
+    this.setState({ storageHashCDA: "" });
   };
 
   render() {
