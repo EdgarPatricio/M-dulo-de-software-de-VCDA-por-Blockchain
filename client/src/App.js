@@ -13,12 +13,13 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
-  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null };
+  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, metamask:null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
       // Obtener el proveedor de red y la instancia web3.
       const web3 = await getWeb3();
+      const  metamask = web3.currentProvider.isMetaMask;
 
       // Usar web3 para obtener las cuentas de los usuarios.
       const accounts = await web3.eth.getAccounts();
@@ -33,7 +34,7 @@ class App extends Component {
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros.
-      this.setState({ web3, accounts, contract: instance }, this.run);
+      this.setState({ web3, metamask, accounts, contract: instance }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       alert(
@@ -103,6 +104,7 @@ class App extends Component {
     this.setState({ showRegister: false });
     this.setState({ storageDNI: "" });
     this.setState({ storageHashCDA: "" });
+    this.setState({ validate: null });
   };
 
   // Función para mostrar el formulario de validación
@@ -111,12 +113,14 @@ class App extends Component {
     this.setState({ showRegister: true });
     this.setState({ storageDNI: "" });
     this.setState({ storageHashCDA: "" });
+    this.setState({ validate: null });
   };
 
   render() {
     const isValide = this.state.validate;
     const div_register = this.state.showRegister;
     const div_validate = this.state.showValidate;
+    const metamaskIs = this.state.metamask;
 
     // Método para leer el documento en formato PDF
     const readFile = (e) => {
@@ -166,10 +170,16 @@ class App extends Component {
           <br />
           <br />
         </div>
-        <button type="button" className="btn" onClick={this.handleChangeRegister} >Registrar</button> | {' '}
-        <button type="button" className="btn" onClick={this.handleChangeValidate} >Validar</button>
-        <br />
-        <br />
+
+        {metamaskIs === true &&
+        <div>
+          <button type="button" className="btn" onClick={this.handleChangeRegister} >Registrar</button> | {' '}
+          <button type="button" className="btn" onClick={this.handleChangeValidate} >Validar</button>
+          <br />
+          <br />
+        </div>
+          
+        }
         <div className="row">
           <div>
             <span>Complete los campos adecuadamente:</span>
@@ -186,8 +196,7 @@ class App extends Component {
                   <label className="active">Número de DNI:</label>
                 </div>
                 <div className="input-field">
-                  <label className="active">Hash del documento:</label>
-                  <input type="text" id="output" name="storageHashCDA" disabled={true} value={this.state.storageHashCDA} onChange={this.handleInputChange} />
+                  <label className="active">Hash del documento: {this.state.storageHashCDA}</label><br />
                 </div>
                 <div className="file-field input-field">
                   <div className="btn">
