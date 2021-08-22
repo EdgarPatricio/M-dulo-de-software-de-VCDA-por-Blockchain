@@ -61,7 +61,7 @@ class App extends Component {
   // teniendo en cuenta si ya se encuentra registrado o no
   handleSubmit = async () => {
     const { storageDNI, storageHashCDA, accounts, contract } = this.state;
-    const registered = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
+    const registered = await contract.methods.findHash(storageHashCDA).call();
     console.log("registrado: "+registered);
 
     // Se comprueba que los campos no esten vacios

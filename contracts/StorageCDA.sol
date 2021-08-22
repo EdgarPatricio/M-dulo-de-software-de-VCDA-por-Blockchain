@@ -17,10 +17,12 @@ contract StorageCDA{
     // El guión bajo es un estándar de solidity para los parámetros
     function createCDA(string memory _dni, string memory _hashCDA) public {
       // Reutilizo la función para saber si el dni y certificado ya fue registrado para no duplicar información
-        bool registered = validateCDA(_dni,_hashCDA);
+        bool registered = findHash(_hashCDA);
         if(registered == false){
             cdas.push(CDA(nextId,_dni,_hashCDA));
             nextId++;
+        }else{
+            revert("El certificado digital académico está duplicado");
         }
    }
 
@@ -30,6 +32,14 @@ contract StorageCDA{
    function validateCDA(string memory _dni, string memory _hashCDA) public view returns(bool){
        for(uint i = 0; i < cdas.length; i++) {
            if (keccak256(abi.encodePacked((cdas[i].dni))) == keccak256(abi.encodePacked((_dni))) && keccak256(abi.encodePacked((cdas[i].hashCDA))) == keccak256(abi.encodePacked((_hashCDA)))) {
+               return true;
+           }
+       }
+   }
+
+   function findHash(string memory _hashCDA) public view returns(bool){
+       for(uint i = 0; i < cdas.length; i++) {
+           if (keccak256(abi.encodePacked((cdas[i].hashCDA))) == keccak256(abi.encodePacked((_hashCDA)))) {
                return true;
            }
        }
