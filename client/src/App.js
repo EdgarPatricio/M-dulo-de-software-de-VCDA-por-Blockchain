@@ -5,6 +5,9 @@ import getWeb3 from "./getWeb3";
 // Librería para generar el hash sha256
 import sha256 from "js-sha256";
 
+// Librería para generar las alertas
+import Swal from 'sweetalert2'
+
 import "./App.css";
 
 import initial from './img/data-security.svg';
@@ -13,13 +16,13 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
-  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, metamask:null, accounts: null, contract: null };
+  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, metamask: null, accounts: null, contract: null };
 
   componentDidMount = async () => {
     try {
       // Obtener el proveedor de red y la instancia web3.
       const web3 = await getWeb3();
-      const  metamask = web3.currentProvider.isMetaMask;
+      const metamask = web3.currentProvider.isMetaMask;
 
       // Usar web3 para obtener las cuentas de los usuarios.
       const accounts = await web3.eth.getAccounts();
@@ -33,13 +36,15 @@ class App extends Component {
       );
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
-      // con la interacción del método del contrato para conocer el número de registros.
+      // con la interacción del método del contrato para conocer el número de registros
       this.setState({ web3, metamask, accounts, contract: instance }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
-      alert(
-        `No se ha podido cargar la web3, las cuentas o el contrato. Comprueba la consola para ver los detalles.`,
-      );
+      Swal.fire({
+        icon: 'error',
+        title: '¡Atención!',
+        text: 'No se ha podido cargar web3, las cuentas o el contrato. Comprueba la consola para ver los detalles',
+      });
       console.error(error);
     }
   };
@@ -48,7 +53,7 @@ class App extends Component {
   run = async () => {
     const { contract } = this.state;
     const number = await contract.methods.numbersCDAs().call();
-    console.log(number);
+    console.log("Número de certificados registrados: " + number);
     this.setState({ numberOfRegistrations: number });
   };
 
@@ -57,18 +62,46 @@ class App extends Component {
   handleSubmit = async () => {
     const { storageDNI, storageHashCDA, accounts, contract } = this.state;
     const registered = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
+    console.log("registrado: "+registered);
 
     // Se comprueba que los campos no esten vacios
     if (storageDNI === "" || storageHashCDA === "") {
-      alert("Los campos deben estar completos para registrar el certificado digital académico en la red Blockchain");
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Atención!',
+        text: 'Los campos deben estar completos para registrar el certificado digital académico en la red Blockchain',
+      });
     }
     // Se comprueba que no este registrado
     else if (registered === false) {
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-start',
+        showConfirmButton: false,
+        timer: 20000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+      Toast.fire({
+        icon: 'info',
+        text: 'Confirme la transacción y espere el mensaje de confirmación'
+      });
       let result = await contract.methods.createCDA(storageDNI, storageHashCDA).send({ from: accounts[0] });
       console.log(result);
-      alert("El certificado digital académico se registró en la red Blockchain con éxito");
+      Swal.fire({
+        icon: 'success',
+        title: '¡Correcto!',
+        text: 'El certificado digital académico se registró en la red Blockchain con éxito',
+      });
     } else {
-      alert("El certificado digital académico ya se encuentra registrado en la red Blockchain");
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Atención!',
+        text: 'El certificado digital académico ya se encuentra registrado en la red Blockchain',
+      });
     }
 
     // Se actualiza el estado del número de registros para mostrar en pantalla
@@ -91,9 +124,28 @@ class App extends Component {
   handleValidate = async () => {
     const { storageDNI, storageHashCDA, contract } = this.state;
     if (storageDNI === "" || storageHashCDA === "") {
-      alert("Los campos deben estar completos para validar el certificado digital académico");
+      Swal.fire({
+        icon: 'warning',
+        title: '¡Atención!',
+        text: 'Los campos deben estar completos para validar el certificado digital académico',
+      });
     } else {
       const response = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
+      const Toast = Swal.mixin({
+        toast: true,
+        position: 'top-start',
+        showConfirmButton: false,
+        timer: 5000,
+        timerProgressBar: true,
+        didOpen: (toast) => {
+          toast.addEventListener('mouseenter', Swal.stopTimer)
+          toast.addEventListener('mouseleave', Swal.resumeTimer)
+        }
+      });
+      Toast.fire({
+        icon: 'info',
+        text: 'Validación de autenticidad realizada, observe el resultado en pantalla'
+      });
       this.setState({ validate: response });
     }
   };
@@ -168,17 +220,15 @@ class App extends Component {
         <div className="center">
           <h5 className="principal-title bt-40">Validación de autenticidad de los certificados académicos digitales</h5>
           <br />
-          <br />
         </div>
 
         {metamaskIs === true &&
-        <div>
-          <button type="button" className="btn" onClick={this.handleChangeRegister} >Registrar</button> | {' '}
-          <button type="button" className="btn" onClick={this.handleChangeValidate} >Validar</button>
-          <br />
-          <br />
-        </div>
-          
+          <div>
+            <button type="button" className="btn" onClick={this.handleChangeRegister} >Registrar</button> | {' '}
+            <button type="button" className="btn" onClick={this.handleChangeValidate} >Validar</button>
+            <br />
+            <br />
+          </div>
         }
         <div className="row">
           <div>
@@ -263,7 +313,7 @@ class App extends Component {
                       <span className="second-title-cost">Es auténtico</span>
                     </div>
                     <div className="card-action">
-                      <a href="./">Verificar otro documento</a>
+                      <a href="./">Validar otro documento</a>
                     </div>
                   </div>
                 </div>
@@ -281,7 +331,7 @@ class App extends Component {
                       <span className="red-text-UNL">No es auténtico</span>
                     </div>
                     <div className="card-action">
-                      <a href="./">Verificar otro documento</a>
+                      <a href="./">Validar otro documento</a>
                     </div>
                   </div>
                 </div>
