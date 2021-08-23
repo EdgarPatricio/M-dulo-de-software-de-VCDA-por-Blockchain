@@ -62,7 +62,6 @@ class App extends Component {
   handleSubmit = async () => {
     const { storageDNI, storageHashCDA, accounts, contract } = this.state;
     const registered = await contract.methods.findHash(storageHashCDA).call();
-    console.log("registrado: " + registered);
 
     // Se comprueba que los campos no esten vacios
     if (storageDNI === "" || storageHashCDA === "") {
@@ -74,20 +73,14 @@ class App extends Component {
     }
     // Se comprueba que no este registrado
     else if (registered === false) {
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-start',
-        showConfirmButton: false,
-        timer: 20000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
+      Swal.fire({
+        title: 'Espere...',
+        text: 'Confirme la transacción y espere el mensaje de confirmación (esto tomará un tiempo)...',
+        allowEscapeKey: false,
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading()
         }
-      });
-      Toast.fire({
-        icon: 'info',
-        text: 'Confirme la transacción y espere el mensaje de confirmación'
       });
       let result = await contract.methods.createCDA(storageDNI, storageHashCDA).send({ from: accounts[0] });
       console.log(result);
@@ -127,13 +120,13 @@ class App extends Component {
       Swal.fire({
         icon: 'warning',
         title: '¡Atención!',
-        text: 'Los campos deben estar completos para validar el certificado digital académico',
+        text: 'Los campos deben estar completos para validar la autenticidad del certificado digital académico',
       });
     } else {
       const response = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
       const Toast = Swal.mixin({
         toast: true,
-        position: 'top-start',
+        position: 'top-end',
         showConfirmButton: false,
         timer: 5000,
         timerProgressBar: true,
@@ -144,7 +137,7 @@ class App extends Component {
       });
       Toast.fire({
         icon: 'info',
-        text: 'Validación de autenticidad realizada, observe el resultado en pantalla'
+        title: 'Validación de autenticidad realizada, observe el resultado en pantalla'
       });
       this.setState({ validate: response });
     }
@@ -172,7 +165,6 @@ class App extends Component {
     const isValide = this.state.validate;
     const div_register = this.state.showRegister;
     const div_validate = this.state.showValidate;
-    const metamaskIs = this.state.metamask;
 
     // Método para leer el documento en formato PDF
     const readFile = (e) => {
@@ -215,139 +207,142 @@ class App extends Component {
     }
     return (
       <div className="container">
-
         {/* Sección de título */}
         <div className="center">
-          <h5 className="principal-title bt-40">Validación de autenticidad de los certificados académicos digitales</h5>
+          <h5 className="principal-title">Validación de autenticidad de los certificados académicos digitales</h5>
           <br />
         </div>
-
-
         <div className="row">
           {div_register === true &&
-          <div >
-            <ul className="tabs">
-              <li className="tab col s3"><a onClick={this.handleChangeValidate}>Validar</a></li>
-              <li className="tab col s3"><a className="active"  onClick={this.handleChangeRegister}>Registrar</a></li>
-            </ul>
-          </div>
+            <div className="row">
+              <div className="col s12 m6">
+                <ul className="tabs container-one">
+                  <li className="tab col s6"><button onClick={this.handleChangeValidate}>Validar certificados</button></li>
+                  <li className="tab col s6 active"><button className="active" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
+                </ul>
+              </div>
+            </div>
           }
           {div_validate === true &&
-          <div >
-            <ul className="tabs">
-              <li className="tab col s3"><a className="active" onClick={this.handleChangeValidate}>Validar</a></li>
-              <li className="tab col s3"><a onClick={this.handleChangeRegister}>Registrar</a></li>
-            </ul>
+            <div className="row">
+              <div className="col s12 m6">
+                <ul className="tabs container-one">
+                  <li className="tab col s6 active"><button className="active" onClick={this.handleChangeValidate}>Validar certificados</button></li>
+                  <li className="tab col s6"><button onClick={this.handleChangeRegister}>Registrar certificados</button></li>
+                </ul>
+              </div>
+            </div>
+          }
+          <div className="row">
+            <div className="col s12">
+              <span>Complete los campos correctamente:</span>
+            </div>
           </div>
-          }
-          <div >
-          <br />
 
-            <span>Complete los campos adecuadamente:</span>
-            <br />
-            <br />
+          <div className="row container-two">
+            {/* Sección de registro de CDA */}
+            {div_register === true &&
+              <div className="col s12 m6">
+                <div className="row">
+                  <div className="input-field">
+                    <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
+                    <label className="active">Número de DNI:</label>
+                  </div>
+                  <div className="input-field">
+                    <label className="active">Hash del documento: {this.state.storageHashCDA}</label><br />
+                  </div>
+                  <div className="file-field input-field">
+                    <div className="btn">
+                      <span>Subir archivo</span>
+                      <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
+                    </div>
+                    <div className="file-path-wrapper">
+                      <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
+                    </div>
+                  </div>
+                </div>
+                <div className="center">
+                  <button type="button" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
+                </div>
+                <p>Número de certificados digitales académicos registrados en Blockchain: {this.state.numberOfRegistrations}</p>
+              </div>
+            }
+
+            {/* Sección de validación de CDA */}
+            {div_validate === true &&
+              <div className="col s12 m6">
+                <div className="row">
+                  <div className="input-field">
+                    <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
+                    <label className="active">Número de DNI:</label>
+                  </div>
+                  <div className="file-field input-field">
+                    <div className="btn">
+                      <span>Subir archivo</span>
+                      <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
+                    </div>
+                    <div className="file-path-wrapper">
+                      <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
+                    </div>
+                  </div>
+                </div>
+                <div className="center">
+                  <button type="button" className="btn btnBlueUNL" onClick={this.handleValidate}>Validar</button>
+                </div>
+              </div>
+            }
+            <div className="col s12 m1"></div>
+            <div className="col s12 m1 verticalLine"></div>
+
+            {/* Sección de inicio indicando que el sistema está listo */}
+            {isValide === null &&
+              <div className="col s12 m4 center">
+                <div className="card-content">
+                  <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
+                  <span className="second-title-cost">El sistema está listo</span>
+                </div>
+              </div>
+            }
+
+            {/* Sección de validación positiva de CDA */}
+            {isValide === true &&
+              <div className="col s12 m4 center">
+                <div className="row " >
+                  <div className="col s12">
+                    <div className="card">
+                      <div className="card-content">
+                        <span className="">El certificado digital académico:</span> <br /> <br />
+                        <img className='img-result' src={valid} alt="" /> <br />
+                        <span className="second-title-cost">Es auténtico</span>
+                      </div>
+                      <div className="card-action">
+                        <a href="./">Validar otro documento</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
+            {/* Sección de validación negativa de CDA */}
+            {isValide === false &&
+              <div className="col s12 m4 center">
+                <div className="row " >
+                  <div className="col s12">
+                    <div className="card">
+                      <div className="card-content">
+                        <span className="">El certificado digital académico:</span> <br /> <br />
+                        <img className='img-result' src={invalid} alt="" /> <br />
+                        <span className="red-text-UNL">No es auténtico</span>
+                      </div>
+                      <div className="card-action">
+                        <a href="./">Validar otro documento</a>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            }
           </div>
-          {/* Sección de registro de CDA */}
-          {div_register === true &&
-            <div className="col s12 m6">
-              <div className="row">
-                <div className="input-field">
-                  <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
-                  <label className="active">Número de DNI:</label>
-                </div>
-                <div className="input-field">
-                  <label className="active">Hash del documento: {this.state.storageHashCDA}</label><br />
-                </div>
-                <div className="file-field input-field">
-                  <div className="btn">
-                    <span>Subir archivo</span>
-                    <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
-                  </div>
-                  <div className="file-path-wrapper">
-                    <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
-                  </div>
-                </div>
-              </div>
-              <div className="center">
-                <button type="button" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
-              </div>
-              <p>Número de certificados digitales académicos registrados en Blockchain: {this.state.numberOfRegistrations}</p>
-            </div>
-          }
-
-          {/* Sección de validación de CDA */}
-          {div_validate === true &&
-            <div className="col s12 m6">
-              <div className="row">
-                <div className="input-field">
-                  <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
-                  <label className="active">Número de DNI:</label>
-                </div>
-                <div className="file-field input-field">
-                  <div className="btn">
-                    <span>Subir archivo</span>
-                    <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
-                  </div>
-                  <div className="file-path-wrapper">
-                    <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
-                  </div>
-                </div>
-              </div>
-              <div className="center">
-                <button type="button" className="btn btnBlueUNL" onClick={this.handleValidate}>Validar</button>
-              </div>
-            </div>
-          }
-          <div className="col s12 m1"></div>
-          <div className="col s12 m1 verticalLine"></div>
-
-          {/* Sección de registro de CDA */}
-          {isValide === null &&
-            <div className="col s12 m4 center">
-              <div className="card-content">
-                <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
-                <span className="second-title-cost">El sistema esta listo</span>
-              </div>
-            </div>
-          }
-
-          {/* Sección de registro de CDA */}
-          {isValide === true &&
-            <div className="col s12 m4 center">
-              <div className="row " >
-                <div className="col s12">
-                  <div className="card">
-                    <div className="card-content">
-                      <span className="">El certificado digital académico:</span> <br /> <br />
-                      <img className='img-result' src={valid} alt="" /> <br />
-                      <span className="second-title-cost">Es auténtico</span>
-                    </div>
-                    <div className="card-action">
-                      <a href="./">Validar otro documento</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
-          {isValide === false &&
-            <div className="col s12 m4 center">
-              <div className="row " >
-                <div className="col s12">
-                  <div className="card">
-                    <div className="card-content">
-                      <span className="">El certificado digital académico:</span> <br /> <br />
-                      <img className='img-result' src={invalid} alt="" /> <br />
-                      <span className="red-text-UNL">No es auténtico</span>
-                    </div>
-                    <div className="card-action">
-                      <a href="./">Validar otro documento</a>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          }
 
         </div>
       </div>
