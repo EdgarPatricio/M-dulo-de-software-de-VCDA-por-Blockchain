@@ -62,7 +62,7 @@ class App extends Component {
   handleSubmit = async () => {
     const { storageDNI, storageHashCDA, accounts, contract } = this.state;
     const registered = await contract.methods.findHash(storageHashCDA).call();
-    console.log("registrado: "+registered);
+    console.log("registrado: " + registered);
 
     // Se comprueba que los campos no esten vacios
     if (storageDNI === "" || storageHashCDA === "") {
@@ -222,21 +222,31 @@ class App extends Component {
           <br />
         </div>
 
-        {metamaskIs === true &&
-          <div>
-            <button type="button" className="btn" onClick={this.handleChangeRegister} >Registrar</button> | {' '}
-            <button type="button" className="btn" onClick={this.handleChangeValidate} >Validar</button>
-            <br />
-            <br />
-          </div>
-        }
+
         <div className="row">
-          <div>
+          {div_register === true &&
+          <div >
+            <ul className="tabs">
+              <li className="tab col s3"><a onClick={this.handleChangeValidate}>Validar</a></li>
+              <li className="tab col s3"><a className="active"  onClick={this.handleChangeRegister}>Registrar</a></li>
+            </ul>
+          </div>
+          }
+          {div_validate === true &&
+          <div >
+            <ul className="tabs">
+              <li className="tab col s3"><a className="active" onClick={this.handleChangeValidate}>Validar</a></li>
+              <li className="tab col s3"><a onClick={this.handleChangeRegister}>Registrar</a></li>
+            </ul>
+          </div>
+          }
+          <div >
+          <br />
+
             <span>Complete los campos adecuadamente:</span>
             <br />
             <br />
           </div>
-
           {/* Sección de registro de CDA */}
           {div_register === true &&
             <div className="col s12 m6">
@@ -288,7 +298,7 @@ class App extends Component {
               </div>
             </div>
           }
-          <div className="col s12 m1 "  ></div>
+          <div className="col s12 m1"></div>
           <div className="col s12 m1 verticalLine"></div>
 
           {/* Sección de registro de CDA */}
