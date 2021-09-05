@@ -233,9 +233,9 @@ class App extends Component {
                 <span className="second-title-cost">Cargando Web3, cuentas, y contrato...</span>
                 <p className="hide-on-small-and-down">
                   Compruebe que su navegador sea <strong>Chrome</strong>  o <strong>Firefox</strong>. <br />
-                  Y tener instalado la extensión <strong>MetaMask</strong> (además <strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank">aquí</a>.
+                  Y tener instalado la extensión <strong>MetaMask</strong> (además <strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
                 </p>
-                <p className="show-on-small show-on-medium hide-on-med-and-up">Debe ingresar por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank">aquí</a>.</p>
+                <p className="show-on-small show-on-medium hide-on-med-and-up">Debe ingresar por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.</p>
               </div>
             </div>
           </div>
