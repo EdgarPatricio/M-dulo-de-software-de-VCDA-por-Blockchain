@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import StorageCDAContract from "./contracts/StorageCDA.json";
+import MigrationsContract from "./contracts/Migrations.json";
 import getWeb3 from "./getWeb3";
 
 // Librería para generar el hash sha256
@@ -16,34 +17,51 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
-  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, metamask: null, accounts: null, contract: null };
+  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
 
   componentDidMount = async () => {
     try {
       // Obtener el proveedor de red y la instancia web3.
       const web3 = await getWeb3();
-      const metamask = web3.currentProvider.isMetaMask;
 
       // Usar web3 para obtener las cuentas de los usuarios.
       const accounts = await web3.eth.getAccounts();
 
-      // Obtener la instancia del contrato.
+      // Obtener la instancia del contrato StorageCDA.
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = StorageCDAContract.networks[networkId];
-      const instance = new web3.eth.Contract(
+      const instanceContractStorageCDA = new web3.eth.Contract(
         StorageCDAContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
+      // Obtener la instancia del contrato Migrations.
+      const deployedNetwork2 = MigrationsContract.networks[networkId];
+      const instanceContractMigrations = new web3.eth.Contract(
+        MigrationsContract.abi,
+        deployedNetwork2 && deployedNetwork2.address,
+      );
+
+      // Consultar el dueño del despliegue de los contratos y comparar si es la cuenta con la que se encuentra conectado.
+      const deploymentOwner = await instanceContractMigrations.methods.owner().call();
+      if (accounts[0] === deploymentOwner) {
+        this.setState({ isDeploymentOwner: true });
+      } else {
+        this.setState({ isDeploymentOwner: false });
+      };
+
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, metamask, accounts, contract: instance }, this.run);
+      this.setState({ web3, accounts, contract: instanceContractStorageCDA, }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
         icon: 'error',
         title: '¡Atención!',
-        text: 'No se ha podido cargar web3, las cuentas o el contrato. Comprueba la consola para ver los detalles',
+        html: 'No se ha podido cargar',
+        timer: 3000,
+        confirmButtonText:
+          'Aceptar',
       });
       console.error(error);
     }
@@ -162,6 +180,7 @@ class App extends Component {
   };
 
   render() {
+    const isOwner = this.state.isDeploymentOwner
     const isValide = this.state.validate;
     const div_register = this.state.showRegister;
     const div_validate = this.state.showValidate;
@@ -171,22 +190,35 @@ class App extends Component {
       const file = e.target.files[0];
       if (!file) return;
 
-      const fileReader = new FileReader();
+      if (file.type === "application/pdf") {
 
-      // El formato al que se convierte el terxto es a un String binario
-      fileReader.readAsBinaryString(file);
+        const fileReader = new FileReader();
 
-      fileReader.onload = () => {
-        console.log(fileReader.result);
+        // El formato al que se convierte el terxto es a un String binario
+        fileReader.readAsBinaryString(file);
 
-        // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
-        const hash256File = sha256(fileReader.result);
-        this.setState({ storageHashCDA: hash256File });
-        console.log(hash256File);
-      }
+        fileReader.onload = () => {
+          // console.log(fileReader.result);
 
-      fileReader.onerror = () => {
-        console.log(fileReader.error);
+          // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
+          const hash256File = sha256(fileReader.result);
+          this.setState({ storageHashCDA: hash256File });
+          // console.log(hash256File);
+        }
+
+        fileReader.onerror = () => {
+          console.log(fileReader.error);
+        }
+      } else {
+        Swal.fire({
+          title: 'Error',
+          icon: 'error',
+          text: 'El archivo seleccionado no es un PDF',
+          allowEscapeKey: false,
+          allowOutsideClick: false,
+          confirmButtonText:
+            '<a href="../">Aceptar</a>',
+        });
       }
 
     };
@@ -199,6 +231,11 @@ class App extends Component {
               <div className="card-content">
                 <img className='img-result' src={loading} alt="Cargando Web3, cuentas, y contrato..." /> <br />
                 <span className="second-title-cost">Cargando Web3, cuentas, y contrato...</span>
+                <p className="hide-on-small-and-down">
+                  Compruebe que su navegador sea <strong>Chrome</strong>  o <strong>Firefox</strong>. <br />
+                  Y tener instalado la extensión <strong>MetaMask</strong> (además <strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank">aquí</a>.
+                </p>
+                <p className="show-on-small show-on-medium hide-on-med-and-up">Debe ingresar por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank">aquí</a>.</p>
               </div>
             </div>
           </div>
@@ -213,7 +250,7 @@ class App extends Component {
           <br />
         </div>
         <div className="row">
-          {div_register === true &&
+          {div_register === true && isOwner === true &&
             <div className="row">
               <div className="col s12 m6">
                 <ul className="tabs container-one">
@@ -223,7 +260,7 @@ class App extends Component {
               </div>
             </div>
           }
-          {div_validate === true &&
+          {div_validate === true && isOwner === true &&
             <div className="row">
               <div className="col s12 m6">
                 <ul className="tabs container-one">
@@ -291,8 +328,8 @@ class App extends Component {
                 </div>
               </div>
             }
-            <div className="col s12 m1"></div>
-            <div className="col s12 m1 verticalLine"></div>
+            <div className="col s12 m1 hide-on-small-and-down"></div>
+            <div className="col s12 m1 verticalLine hide-on-small-and-down"></div>
 
             {/* Sección de inicio indicando que el sistema está listo */}
             {isValide === null &&
@@ -343,7 +380,6 @@ class App extends Component {
               </div>
             }
           </div>
-
         </div>
       </div>
     );
