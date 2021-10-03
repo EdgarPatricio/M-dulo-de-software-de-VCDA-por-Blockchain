@@ -1,5 +1,5 @@
-var StorageCDA = artifacts.require("./StorageCDA.sol");
+var StorageCAD = artifacts.require("./StorageCAD.sol");
 
 module.exports = function(deployer) {
-  deployer.deploy(StorageCDA);
+  deployer.deploy(StorageCAD);
 };

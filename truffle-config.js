@@ -11,9 +11,10 @@ module.exports = {
     },
     rinkeby:{
       provider: function() {
-        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/150ef4103b7f49d8bb083c2352662607");
+        return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/85be715d2d394226b878e09c8e1e66ee");
       },
       network_id: '4',
+      networkCheckTimeout: 999999,
     }
   },
   compilers: {

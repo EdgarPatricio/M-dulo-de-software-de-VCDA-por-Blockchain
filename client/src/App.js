@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import StorageCDAContract from "./contracts/StorageCDA.json";
+import StorageCADContract from "./contracts/StorageCAD.json";
 import MigrationsContract from "./contracts/Migrations.json";
 import getWeb3 from "./getWeb3";
 
@@ -17,7 +17,7 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
-  state = { storageDNI: "", storageHashCDA: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
+  state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
 
   componentDidMount = async () => {
     try {
@@ -27,11 +27,11 @@ class App extends Component {
       // Usar web3 para obtener las cuentas de los usuarios.
       const accounts = await web3.eth.getAccounts();
 
-      // Obtener la instancia del contrato StorageCDA.
+      // Obtener la instancia del contrato StorageCAD.
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = StorageCDAContract.networks[networkId];
-      const instanceContractStorageCDA = new web3.eth.Contract(
-        StorageCDAContract.abi,
+      const deployedNetwork = StorageCADContract.networks[networkId];
+      const instanceContractStorageCAD = new web3.eth.Contract(
+        StorageCADContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
@@ -52,7 +52,7 @@ class App extends Component {
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, accounts, contract: instanceContractStorageCDA, }, this.run);
+      this.setState({ web3, accounts, contract: instanceContractStorageCAD, }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
@@ -60,63 +60,76 @@ class App extends Component {
         title: '¡Atención!',
         html: 'No se ha podido cargar',
         timer: 3000,
-        confirmButtonText:
-          'Aceptar',
+        showConfirmButton: false,
       });
       console.error(error);
     }
   };
 
-  // La función run usa el método numbersCDAs para conocer el número de registros de CDAs
+  // La función run usa el método numbersCADs para conocer el número de registros de CADs
   run = async () => {
     const { contract } = this.state;
-    const number = await contract.methods.numbersCDAs().call();
+    const number = await contract.methods.numbersCADs().call();
     console.log("Número de certificados registrados: " + number);
     this.setState({ numberOfRegistrations: number });
   };
 
-  // La función handleSubmit  usa los métodos para crear el registro de un CDA en la red Blockchain
+  // La función handleSubmit  usa los métodos para crear el registro de un CAD en la red Blockchain
   // teniendo en cuenta si ya se encuentra registrado o no
   handleSubmit = async () => {
-    const { storageDNI, storageHashCDA, accounts, contract } = this.state;
-    const registered = await contract.methods.findHash(storageHashCDA).call();
+    const { storageDNI, storageHashCAD, accounts, contract } = this.state;
+    const registered = await contract.methods.findHash(storageHashCAD).call();
 
     // Se comprueba que los campos no esten vacios
-    if (storageDNI === "" || storageHashCDA === "") {
+    if (storageDNI === "" || storageHashCAD === "") {
       Swal.fire({
         icon: 'warning',
         title: '¡Atención!',
-        text: 'Los campos deben estar completos para registrar el certificado digital académico en la red Blockchain',
+        text: 'Los campos deben estar completos para registrar el certificado académico digital en la red Blockchain',
       });
     }
     // Se comprueba que no este registrado
     else if (registered === false) {
       Swal.fire({
         title: 'Espere...',
-        text: 'Confirme la transacción y espere el mensaje de confirmación (esto tomará un tiempo)...',
+        html: '<b>Confirmar</b> la transacción y esperar el mensaje de confirmación (esto tomará un tiempo)... <br />',
         allowEscapeKey: false,
         allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading()
         }
       });
-      let result = await contract.methods.createCDA(storageDNI, storageHashCDA).send({ from: accounts[0] });
-      console.log(result);
-      Swal.fire({
-        icon: 'success',
-        title: '¡Correcto!',
-        text: 'El certificado digital académico se registró en la red Blockchain con éxito',
-      });
+      try {
+        let result = await contract.methods.registerCAD(storageDNI, storageHashCAD, accounts[0]).send({ from: accounts[0] });
+        Swal.fire({
+          icon: 'success',
+          title: '¡Correcto!',
+          text: 'El certificado académico digital se registró en la red Blockchain con éxito',
+        });
+        console.log(result);
+      } catch (error) {
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Atención!',
+          html: 'Error al registrar el certificado académico digital <br />' +
+            'Intentelo más tarde o revise el siguiente mensaje:' +
+            '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
+            '<span style="color:red">Error: </span>(' +
+            error.message + ')',
+          confirmButtonText: 'Aceptar',
+        });
+      };
+
     } else {
       Swal.fire({
         icon: 'warning',
         title: '¡Atención!',
-        text: 'El certificado digital académico ya se encuentra registrado en la red Blockchain',
+        text: 'El certificado académico digital ya se encuentra registrado en la red Blockchain',
       });
     }
 
     // Se actualiza el estado del número de registros para mostrar en pantalla
-    const number = await contract.methods.numbersCDAs().call();
+    const number = await contract.methods.numbersCADs().call();
     this.setState({ numberOfRegistrations: number });
 
   };
@@ -131,33 +144,46 @@ class App extends Component {
     });
   };
 
-  // Función para validar si el CDA es o no autentico
+  // Función para validar si el CAD es o no autentico
   handleValidate = async () => {
-    const { storageDNI, storageHashCDA, contract } = this.state;
-    if (storageDNI === "" || storageHashCDA === "") {
+    const { storageDNI, storageHashCAD, contract } = this.state;
+    if (storageDNI === "" || storageHashCAD === "") {
       Swal.fire({
         icon: 'warning',
         title: '¡Atención!',
-        text: 'Los campos deben estar completos para validar la autenticidad del certificado digital académico',
+        text: 'Los campos deben estar completos para validar la autenticidad del certificado académico digital',
       });
     } else {
-      const response = await contract.methods.validateCDA(storageDNI, storageHashCDA).call();
-      const Toast = Swal.mixin({
-        toast: true,
-        position: 'top-end',
-        showConfirmButton: false,
-        timer: 5000,
-        timerProgressBar: true,
-        didOpen: (toast) => {
-          toast.addEventListener('mouseenter', Swal.stopTimer)
-          toast.addEventListener('mouseleave', Swal.resumeTimer)
-        }
-      });
-      Toast.fire({
-        icon: 'info',
-        title: 'Validación de autenticidad realizada, observe el resultado en pantalla'
-      });
-      this.setState({ validate: response });
+      try {
+        const response = await contract.methods.validateCAD(storageDNI, storageHashCAD).call();
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+        Toast.fire({
+          icon: 'info',
+          title: 'Validación de autenticidad realizada, observe el resultado en pantalla'
+        });
+        this.setState({ validate: response });
+      } catch (error) {
+        Swal.fire({
+          icon: 'warning',
+          title: '¡Atención!',
+          html: 'Error al registrar el certificado académico digital <br />' +
+            'Intentelo más tarde o revise el siguiente mensaje:' +
+            '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
+            '<span style="color:red">Error: </span>(' +
+            error.message + ')',
+          confirmButtonText: 'Aceptar',
+        });
+      };
     }
   };
 
@@ -166,7 +192,7 @@ class App extends Component {
     this.setState({ showValidate: true });
     this.setState({ showRegister: false });
     this.setState({ storageDNI: "" });
-    this.setState({ storageHashCDA: "" });
+    this.setState({ storageHashCAD: "" });
     this.setState({ validate: null });
   };
 
@@ -175,7 +201,7 @@ class App extends Component {
     this.setState({ showValidate: false });
     this.setState({ showRegister: true });
     this.setState({ storageDNI: "" });
-    this.setState({ storageHashCDA: "" });
+    this.setState({ storageHashCAD: "" });
     this.setState({ validate: null });
   };
 
@@ -202,7 +228,7 @@ class App extends Component {
 
           // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
           const hash256File = sha256(fileReader.result);
-          this.setState({ storageHashCDA: hash256File });
+          this.setState({ storageHashCAD: hash256File });
           // console.log(hash256File);
         }
 
@@ -233,9 +259,10 @@ class App extends Component {
                 <span className="second-title-cost">Cargando Web3, cuentas, y contrato...</span>
                 <p className="hide-on-small-and-down">
                   Compruebe que su navegador sea <strong>Chrome</strong>  o <strong>Firefox</strong>. <br />
-                  Y tener instalado la extensión <strong>MetaMask</strong> (además <strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
+                  Tener instalado la extensión <strong>MetaMask</strong> (<strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
                 </p>
                 <p className="show-on-small show-on-medium hide-on-med-and-up">Debe ingresar por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.</p>
+                <p>Y estar conectado a la red <strong>Rinkeby</strong></p>
               </div>
             </div>
           </div>
@@ -277,7 +304,7 @@ class App extends Component {
           </div>
 
           <div className="row container-two">
-            {/* Sección de registro de CDA */}
+            {/* Sección de registro de CAD */}
             {div_register === true &&
               <div className="col s12 m6">
                 <div className="row">
@@ -286,7 +313,7 @@ class App extends Component {
                     <label className="active">Número de DNI:</label>
                   </div>
                   <div className="input-field">
-                    <label className="active">Hash del documento: {this.state.storageHashCDA}</label><br />
+                    <label className="active">Hash del documento: {this.state.storageHashCAD}</label><br />
                   </div>
                   <div className="file-field input-field">
                     <div className="btn">
@@ -294,7 +321,7 @@ class App extends Component {
                       <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
                     </div>
                     <div className="file-path-wrapper">
-                      <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
+                      <input className="file-path validate" placeholder="Subir el certificado académico digital en formato PDF" type="text" />
                     </div>
                   </div>
                 </div>
@@ -305,7 +332,7 @@ class App extends Component {
               </div>
             }
 
-            {/* Sección de validación de CDA */}
+            {/* Sección de validación de CAD */}
             {div_validate === true &&
               <div className="col s12 m6">
                 <div className="row">
@@ -319,7 +346,7 @@ class App extends Component {
                       <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
                     </div>
                     <div className="file-path-wrapper">
-                      <input className="file-path validate" placeholder="Subir el certificado digital académico en formato .pdf" type="text" />
+                      <input className="file-path validate" placeholder="Subir el certificado académico digital en formato PDF" type="text" />
                     </div>
                   </div>
                 </div>
@@ -341,14 +368,14 @@ class App extends Component {
               </div>
             }
 
-            {/* Sección de validación positiva de CDA */}
+            {/* Sección de validación positiva de CAD */}
             {isValide === true &&
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
                     <div className="card">
                       <div className="card-content">
-                        <span className="">El certificado digital académico:</span> <br /> <br />
+                        <span className="">El certificado académico digital:</span> <br /> <br />
                         <img className='img-result' src={valid} alt="" /> <br />
                         <span className="second-title-cost">Es auténtico</span>
                       </div>
@@ -360,14 +387,14 @@ class App extends Component {
                 </div>
               </div>
             }
-            {/* Sección de validación negativa de CDA */}
+            {/* Sección de validación negativa de CAD */}
             {isValide === false &&
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
                     <div className="card">
                       <div className="card-content">
-                        <span className="">El certificado digital académico:</span> <br /> <br />
+                        <span className="">El certificado académico digital:</span> <br /> <br />
                         <img className='img-result' src={invalid} alt="" /> <br />
                         <span className="red-text-UNL">No es auténtico</span>
                       </div>
