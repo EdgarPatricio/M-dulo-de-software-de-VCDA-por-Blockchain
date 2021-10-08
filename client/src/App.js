@@ -31,20 +31,13 @@ class App extends Component {
       // Obtener la instancia del contrato StorageCAD.
       const networkId = await web3.eth.net.getId();
       const deployedNetwork = StorageCADContract.networks[networkId];
-      const instanceContractStorageCAD = new web3.eth.Contract(
+      const instanceContract = new web3.eth.Contract(
         StorageCADContract.abi,
         deployedNetwork && deployedNetwork.address,
       );
 
-      // Obtener la instancia del contrato Migrations.
-      const deployedNetwork2 = MigrationsContract.networks[networkId];
-      const instanceContractMigrations = new web3.eth.Contract(
-        MigrationsContract.abi,
-        deployedNetwork2 && deployedNetwork2.address,
-      );
-
       // Consultar el dueño del despliegue de los contratos y comparar si es la cuenta con la que se encuentra conectado.
-      const deploymentOwner = await instanceContractMigrations.methods.owner().call();
+      const deploymentOwner = await instanceContract.methods.owner().call();
       if (accounts[0] === deploymentOwner) {
         this.setState({ isDeploymentOwner: true });
       } else {
@@ -53,7 +46,7 @@ class App extends Component {
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, accounts, contract: instanceContractStorageCAD, }, this.run);
+      this.setState({ web3, accounts, contract: instanceContract, }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
