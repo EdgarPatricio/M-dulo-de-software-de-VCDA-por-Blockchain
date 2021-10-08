@@ -1,6 +1,5 @@
 import React, { Component } from "react";
 import StorageCADContract from "./contracts/StorageCAD.json";
-import MigrationsContract from "./contracts/Migrations.json";
 import getWeb3 from "./getWeb3";
 
 // Librería para generar el hash sha256
