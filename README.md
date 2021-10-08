@@ -62,7 +62,7 @@ _Para ejecutar las pruebas se realiza de la siguiente manera_
 
 ### Analizar las pruebas unitarias en el subsistema de contratos inteligentes 🔩
 
-_Explica que verifican estas pruebas y por qué_
+_Estas pruebas verifican que unidades de código del subsistema de contratos inteligentes funcionen correctamente_
 
 ```
 truffle test
@@ -70,10 +70,14 @@ truffle test
 
 ### Y las pruebas unitarias  del subsistema de aplicaciones ⌨️
 
-_Explica que verifican estas pruebas y por qué_
+_Estas pruebas verifican que unidades de código del subsistema de aplicaciones funcionen correctamente_
+
+Desde la carpeta raíz del proyecto:
+
 
 ```
-npm 
+cd client
+npm test
 ```
 
 ## Despliegue 📦
@@ -91,7 +95,7 @@ const mnemonic = "palabra1 palabra2 ...";
 // Ejemplo
 return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/....");
 ```
-4. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto
+4. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto:
 ```
 cd client
 npm run build
@@ -107,6 +111,8 @@ _Las herramientas que se utilizó para crear el proyecto:_
 * [Truffle Suite](https://www.trufflesuite.com/): Version 5.4.1
 * [web3](https://web3js.readthedocs.io/en/v1.4.0/): Version 1.4.0
 * [js-sha256](https://www.npmjs.com/package/js-sha256): Version 0.9.0
+* [Enzyme](https://www.npmjs.com/package/enzyme): Version 3.11.0
+* [Jest-dom](https://jestjs.io/docs/tutorial-react): Version 5.14.1
 * [Solidity](https://solidity-es.readthedocs.io/es/latest/): Version 0.5.16
 * [React](https://es.reactjs.org/) Version 17.0.2
 * [GIT](https://git-scm.com/): Version 2.32.0
