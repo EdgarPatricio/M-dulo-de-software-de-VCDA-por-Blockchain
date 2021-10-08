@@ -11,7 +11,7 @@ Mira **Deployment** para conocer como desplegar el proyecto.
  
 ### Pre-requisitos 📋
 
-_Que cosas necesitas para instalar el software y como instalarlas_
+_Estas son las cosas que necesitas para instalar el software y como instalarlas_
 
 * [Node.js](https://nodejs.org/es/download/) - Entorno en tiempo de ejecución multiplataforma, descargar e instalar de acuerdo al sistema operativo.
 * [web3](https://rometools.github.io/rome/) - Una colección de bibliotecas de JavaScript, que te permiten interactuar con un nodo de Ethereum local o remoto mediante HTTP, IPC o WebSocket. Instalar con el comando:
@@ -95,12 +95,18 @@ const mnemonic = "palabra1 palabra2 ...";
 // Ejemplo
 return new HDWalletProvider(mnemonic, "https://rinkeby.infura.io/v3/....");
 ```
-4. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto:
+4. Compilar y migrar el subsistema de contratos inteligentes con los siguientes comandos:
+```
+truffle develop
+compile
+migrate --network rinkeby // en este caso la red es rinkeby
+```
+6. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto:
 ```
 cd client
-npm run build
+npm run build // o yarn build 
 ```
-5. Ubicar en cualquier servicio de hosting, en este caso se uso Microsoft Azure para observar el resultado  ingrese [aquí](https://certificados-unl.azurewebsites.net/).
+6. Ubicar en cualquier servicio de hosting, en este caso se uso Microsoft Azure para observar el resultado  ingrese [aquí](https://certificados-unl.azurewebsites.net/).
 
 **NOTA**: Asegurarse que MetaMask este conectado a la red correcta, en este  caso a **Rinkeby**
 ## Construido con 🛠️
