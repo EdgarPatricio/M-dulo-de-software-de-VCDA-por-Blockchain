@@ -17,6 +17,7 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
+  validateOnSave() {}
   state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
 
   componentDidMount = async () => {
@@ -282,7 +283,7 @@ class App extends Component {
               <div className="col s12 m6">
                 <ul className="tabs container-one">
                   <li className="tab col s6"><button onClick={this.handleChangeValidate}>Validar certificados</button></li>
-                  <li className="tab col s6 active"><button className="active" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
+                  <li className="tab col s6 active"><button  className="active" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
                 </ul>
               </div>
             </div>
@@ -291,8 +292,8 @@ class App extends Component {
             <div className="row">
               <div className="col s12 m6">
                 <ul className="tabs container-one">
-                  <li className="tab col s6 active"><button className="active" onClick={this.handleChangeValidate}>Validar certificados</button></li>
-                  <li className="tab col s6"><button onClick={this.handleChangeRegister}>Registrar certificados</button></li>
+                  <li className="tab col s6 active"><button data-testid="btnChangeValidate" className="active" onClick={this.handleChangeValidate}>Validar certificados</button></li>
+                  <li className="tab col s6"><button data-testid="btnChangeRegister" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
                 </ul>
               </div>
             </div>

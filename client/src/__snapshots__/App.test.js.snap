@@ -1,0 +1,245 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Pruebas unitarias a: <App /> Renderizar <App /> al no estar conectado a web3, cuentas, contrato o metamask  1`] = `
+<div
+  className="row center"
+>
+  <div
+    className="col s12"
+  >
+    <div
+      className="card"
+    >
+      <div
+        className="card-content"
+      >
+        <img
+          alt="Cargando Web3, cuentas, y contrato..."
+          className="img-result"
+          src="loading.svg"
+        />
+         
+        <br />
+        <span
+          className="second-title-cost"
+        >
+          Cargando Web3, cuentas, y contrato...
+        </span>
+        <p
+          className="hide-on-small-and-down"
+        >
+          Compruebe que su navegador sea 
+          <strong>
+            Chrome
+          </strong>
+            o 
+          <strong>
+            Firefox
+          </strong>
+          . 
+          <br />
+          Tener instalado la extensión 
+          <strong>
+            MetaMask
+          </strong>
+           (
+          <strong>
+            iniciar sesión
+          </strong>
+           o 
+          <strong>
+            crear cuenta
+          </strong>
+          ), 
+          <br />
+           más información 
+          <a
+            href="https://metamask.io/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            aquí
+          </a>
+          .
+        </p>
+        <p
+          className="show-on-small show-on-medium hide-on-med-and-up"
+        >
+          Debe ingresar por medio de la aplicación móvil de MetaMask, más información 
+          <a
+            href="https://metamask.io/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            aquí
+          </a>
+          .
+        </p>
+        <p>
+          Y estar conectado a la red 
+          <strong>
+            Rinkeby
+          </strong>
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`Pruebas unitarias a: <App /> Renderizar <App /> correctamente al estar conectado correctamente 1`] = `
+<div
+  className="container"
+>
+  <div
+    className="center"
+  >
+    <h5
+      className="principal-title"
+    >
+      Validación de autenticidad de los certificados académicos digitales
+    </h5>
+    <br />
+  </div>
+  <div
+    className="row"
+  >
+    <div
+      className="row"
+    >
+      <div
+        className="col s12 m6"
+      >
+        <ul
+          className="tabs container-one"
+        >
+          <li
+            className="tab col s6 active"
+          >
+            <button
+              className="active"
+              data-testid="btnChangeValidate"
+              onClick={[Function]}
+            >
+              Validar certificados
+            </button>
+          </li>
+          <li
+            className="tab col s6"
+          >
+            <button
+              data-testid="btnChangeRegister"
+              onClick={[Function]}
+            >
+              Registrar certificados
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div
+      className="row"
+    >
+      <div
+        className="col s12"
+      >
+        <span>
+          Complete los campos correctamente:
+        </span>
+      </div>
+    </div>
+    <div
+      className="row container-two"
+    >
+      <div
+        className="col s12 m6"
+      >
+        <div
+          className="row"
+        >
+          <div
+            className="input-field"
+          >
+            <input
+              id="dni"
+              name="storageDNI"
+              onChange={[Function]}
+              type="text"
+              value=""
+            />
+            <label
+              className="active"
+            >
+              Número de DNI:
+            </label>
+          </div>
+          <div
+            className="file-field input-field"
+          >
+            <div
+              className="btn"
+            >
+              <span>
+                Subir archivo
+              </span>
+              <input
+                accept=".pdf"
+                multiple={false}
+                name="inputfile"
+                onChange={[Function]}
+                type="file"
+              />
+            </div>
+            <div
+              className="file-path-wrapper"
+            >
+              <input
+                className="file-path validate"
+                placeholder="Subir el certificado académico digital en formato PDF"
+                type="text"
+              />
+            </div>
+          </div>
+        </div>
+        <div
+          className="center"
+        >
+          <button
+            className="btn btnBlueUNL"
+            onClick={[Function]}
+            type="button"
+          >
+            Validar
+          </button>
+        </div>
+      </div>
+      <div
+        className="col s12 m1 hide-on-small-and-down"
+      />
+      <div
+        className="col s12 m1 verticalLine hide-on-small-and-down"
+      />
+      <div
+        className="col s12 m4 center"
+      >
+        <div
+          className="card-content"
+        >
+          <img
+            alt="El sistema está listo"
+            className="img-initial"
+            src="data-security.svg"
+          />
+           
+          <br />
+          <span
+            className="second-title-cost"
+          >
+            El sistema está listo
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
