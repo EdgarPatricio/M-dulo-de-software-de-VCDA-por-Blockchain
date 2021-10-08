@@ -101,7 +101,7 @@ truffle develop
 compile
 migrate --network rinkeby // en este caso la red es rinkeby
 ```
-6. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto:
+5. Generar el **build**, en una consola ejecutar en la carpeta raíz del proyecto:
 ```
 cd client
 npm run build // o yarn build 
