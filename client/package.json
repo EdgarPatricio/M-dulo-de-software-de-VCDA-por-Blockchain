@@ -20,7 +20,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "cy:open": "cypress open"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -38,6 +39,9 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^8.5.0",
+    "cypress-file-upload": "^5.0.8",
+    "cypress-metamask": "^1.0.5-development",
     "enzyme": "^3.11.0",
     "enzyme-adapter-react-16": "^1.15.6",
     "enzyme-to-json": "^3.6.2",

@@ -319,7 +319,7 @@ class App extends Component {
                   </div>
                 </div>
                 <div className="center">
-                  <button type="button" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
+                  <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
                 </div>
                 <p>Número de certificados digitales académicos registrados en Blockchain: {this.state.numberOfRegistrations}</p>
               </div>
@@ -344,7 +344,7 @@ class App extends Component {
                   </div>
                 </div>
                 <div className="center">
-                  <button type="button" className="btn btnBlueUNL" onClick={this.handleValidate}>Validar</button>
+                  <button type="button" data-test-id="test-button-validate" className="btn btnBlueUNL" onClick={this.handleValidate}>Validar</button>
                 </div>
               </div>
             }
