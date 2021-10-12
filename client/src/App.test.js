@@ -124,7 +124,7 @@ describe('Pruebas unitarias a: <App />', () => {
     expect(handleChangeRegister.mock.calls.length).toEqual(1);
   });
 
-  test('Mostarw input para la función leer PDF', () => {
+  test('Mostrar input para la función leer PDF', () => {
     const wrapper = shallow(<App />).setState(stateConecction);
     expect(wrapper.contains(<input
       className="file-path validate"

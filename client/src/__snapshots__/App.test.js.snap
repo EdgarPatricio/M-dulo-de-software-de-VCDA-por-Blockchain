@@ -206,6 +206,7 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> correctamente al estar 
         >
           <button
             className="btn btnBlueUNL"
+            data-test-id="test-button-validate"
             onClick={[Function]}
             type="button"
           >

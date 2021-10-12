@@ -16,7 +16,7 @@ import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
-  validateOnSave() {}
+
   state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
 
   componentDidMount = async () => {
@@ -105,7 +105,7 @@ class App extends Component {
           icon: 'warning',
           title: '¡Atención!',
           html: 'Error al registrar el certificado académico digital <br />' +
-            'Intentelo más tarde o revise el siguiente mensaje:' +
+            'Inténtelo más tarde o revise el siguiente mensaje:' +
             '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
             '<span style="color:red">Error: </span>(' +
             error.message + ')',
@@ -170,7 +170,7 @@ class App extends Component {
           icon: 'warning',
           title: '¡Atención!',
           html: 'Error al registrar el certificado académico digital <br />' +
-            'Intentelo más tarde o revise el siguiente mensaje:' +
+            'Inténtelo más tarde o revise el siguiente mensaje:' +
             '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
             '<span style="color:red">Error: </span>(' +
             error.message + ')',
