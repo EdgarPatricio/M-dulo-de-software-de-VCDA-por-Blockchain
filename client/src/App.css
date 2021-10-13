@@ -20,3 +20,20 @@
 .App-link {
   color: #09d3ac;
 }
+.alert .card-content span {
+	font-weight: bold;
+	font-size: 1.1em;
+	margin-right:4px;
+
+}
+.alert .close {
+	float:right;
+	position: relative;
+	padding-right: 4px;
+}
+.alert-one{
+	width:90% !important;
+}
+.alert-two{
+	width:10px !important;
+}

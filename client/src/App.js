@@ -35,17 +35,47 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
+      // Obtener el saldo de la cuenta con la que se generará las transacciones
+      const balance = await web3.eth.getBalance(accounts[0]);
+      const balanceETHER = web3.utils.fromWei(balance, 'ether');
+
       // Consultar el dueño del despliegue de los contratos y comparar si es la cuenta con la que se encuentra conectado.
       const deploymentOwner = await instanceContract.methods.owner().call();
       if (accounts[0] === deploymentOwner) {
         this.setState({ isDeploymentOwner: true });
+        if (balanceETHER > 0) {
+          Swal.fire({
+            icon: 'info',
+            title: 'Saldo de tu cuenta:',
+            text: balanceETHER + ' ETH',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            timer: 5000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          });
+        } else {
+          Swal.fire({
+            icon: 'warning',
+            title: 'El saldo de tu cuenta es de: ' + balanceETHER + ' ETH',
+            text: 'No tienes fondos suficientes para registrar pero si puedes validar',
+            toast: true,
+            position: 'top-end',
+            showConfirmButton: false,
+            showCloseButton: true,
+          });
+        }
       } else {
         this.setState({ isDeploymentOwner: false });
       };
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, accounts, contract: instanceContract, }, this.run);
+      this.setState({ web3, accounts, contract: instanceContract }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
@@ -275,7 +305,7 @@ class App extends Component {
               <div className="col s12 m6">
                 <ul className="tabs container-one">
                   <li className="tab col s6"><button onClick={this.handleChangeValidate}>Validar certificados</button></li>
-                  <li className="tab col s6 active"><button  className="active" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
+                  <li className="tab col s6 active"><button className="active" onClick={this.handleChangeRegister}>Registrar certificados</button></li>
                 </ul>
               </div>
             </div>
@@ -291,7 +321,7 @@ class App extends Component {
             </div>
           }
           <div className="row">
-            <div className="col s12">
+            <div className="col s12 m6">
               <span>Complete los campos correctamente:</span>
             </div>
           </div>
@@ -321,7 +351,13 @@ class App extends Component {
                 <div className="center">
                   <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
                 </div>
-                <p>Número de certificados digitales académicos registrados en Blockchain: {this.state.numberOfRegistrations}</p>
+                <div className="alert card blue lighten-4 blue-text text-darken-3">
+                  <div className="card-content">
+                    <p><i className="fas fa-info-circle"></i> <span>Información:</span> Actualmente existen <span>{this.state.numberOfRegistrations}</span>certificados académicos digitales registrados en la red Rinkeby de Ethereum.</p>
+                  </div>
+                </div>
+                <p></p>
+                <p></p>
               </div>
             }
 
