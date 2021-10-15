@@ -136,6 +136,7 @@ class App extends Component {
         icon: 'warning',
         title: '¡Atención!',
         text: 'Los campos deben estar completos para registrar el certificado académico digital en la red Blockchain',
+        confirmButtonText: 'Aceptar',
       });
     }
     // Se comprueba que no este registrado
@@ -164,6 +165,7 @@ class App extends Component {
           icon: 'success',
           title: '¡Correcto!',
           text: 'El certificado académico digital se registró en la red Blockchain con éxito',
+          confirmButtonText: 'Aceptar',
         });
         console.log(result);
       } catch (error) {
@@ -184,6 +186,7 @@ class App extends Component {
         icon: 'warning',
         title: '¡Atención!',
         text: 'El certificado académico digital ya se encuentra registrado en la red Blockchain',
+        confirmButtonText: 'Aceptar',
       });
     }
 
@@ -211,6 +214,7 @@ class App extends Component {
         icon: 'warning',
         title: '¡Atención!',
         text: 'Los campos deben estar completos para validar la autenticidad del certificado académico digital',
+        confirmButtonText: 'Aceptar',
       });
     } else {
       try {
@@ -295,8 +299,22 @@ class App extends Component {
             text: fileReader.error,
             allowEscapeKey: false,
             allowOutsideClick: false,
-            confirmButtonText:
-              '<a href="../">Aceptar</a>',
+            confirmButtonText: 'Aceptar',
+            allowOutsideClick: () => {
+              const popup = Swal.getPopup()
+              popup.classList.remove('swal2-show')
+              setTimeout(() => {
+                popup.classList.add('animate__animated', 'animate__headShake')
+              })
+              setTimeout(() => {
+                popup.classList.remove('animate__animated', 'animate__headShake')
+              }, 500)
+              return false
+            }
+          }).then((result) => {
+            if (result.isConfirmed) {
+              window.location.reload(true);
+            }
           });
           console.log(fileReader.error);
         }
@@ -307,8 +325,22 @@ class App extends Component {
           text: 'El archivo seleccionado no es un PDF',
           allowEscapeKey: false,
           allowOutsideClick: false,
-          confirmButtonText:
-            '<a href="../">Aceptar</a>',
+          confirmButtonText: 'Aceptar',
+          allowOutsideClick: () => {
+            const popup = Swal.getPopup()
+            popup.classList.remove('swal2-show')
+            setTimeout(() => {
+              popup.classList.add('animate__animated', 'animate__headShake')
+            })
+            setTimeout(() => {
+              popup.classList.remove('animate__animated', 'animate__headShake')
+            }, 500)
+            return false
+          }
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.reload(true);
+          }
         });
       }
 
