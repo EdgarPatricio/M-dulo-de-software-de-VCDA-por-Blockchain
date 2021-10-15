@@ -6,21 +6,41 @@ import getWeb3 from "./getWeb3";
 import sha256 from "js-sha256";
 
 // Librería para generar las alertas
-import Swal from 'sweetalert2'
+import Swal from 'sweetalert2';
+import 'animate.css';
 
 import "./App.css";
 
 import initial from './img/data-security.svg';
-import loading from './img/loading.svg';
 import valid from './img/valid.svg';
 import invalid from './img/invalid.svg';
 
 class App extends Component {
 
-  state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: true };
+  state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: null, balance: null };
 
   componentDidMount = async () => {
+    Swal.fire({
+      title: 'Cargando...',
+      html: '<b>Inicia sesión </b> en la wallet de MetaMask<br />',
+      allowEscapeKey: false,
+      didOpen: () => {
+        Swal.showLoading()
+      },
+      allowOutsideClick: () => {
+        const popup = Swal.getPopup()
+        popup.classList.remove('swal2-show')
+        setTimeout(() => {
+          popup.classList.add('animate__animated', 'animate__headShake')
+        })
+        setTimeout(() => {
+          popup.classList.remove('animate__animated', 'animate__headShake')
+        }, 500)
+        return false
+      }
+    });
     try {
+
       // Obtener el proveedor de red y la instancia web3.
       const web3 = await getWeb3();
 
@@ -43,39 +63,13 @@ class App extends Component {
       const deploymentOwner = await instanceContract.methods.owner().call();
       if (accounts[0] === deploymentOwner) {
         this.setState({ isDeploymentOwner: true });
-        if (balanceETHER > 0) {
-          Swal.fire({
-            icon: 'info',
-            title: 'Saldo de tu cuenta:',
-            text: balanceETHER + ' ETH',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 5000,
-            timerProgressBar: true,
-            didOpen: (toast) => {
-              toast.addEventListener('mouseenter', Swal.stopTimer)
-              toast.addEventListener('mouseleave', Swal.resumeTimer)
-            }
-          });
-        } else {
-          Swal.fire({
-            icon: 'warning',
-            title: 'El saldo de tu cuenta es de: ' + balanceETHER + ' ETH',
-            text: 'No tienes fondos suficientes para registrar pero si puedes validar',
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            showCloseButton: true,
-          });
-        }
       } else {
         this.setState({ isDeploymentOwner: false });
       };
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, accounts, contract: instanceContract }, this.run);
+      this.setState({ web3, accounts, contract: instanceContract, balance: balanceETHER }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
@@ -91,9 +85,42 @@ class App extends Component {
 
   // La función run usa el método numbersCADs para conocer el número de registros de CADs
   run = async () => {
-    const { contract } = this.state;
+    Swal.fire({
+      icon: 'success',
+      title: '¡Correcto!',
+      timer: 700,
+      showConfirmButton: false,
+    });
+    const { contract, isDeploymentOwner, balance } = this.state;
+    if (isDeploymentOwner === true) {
+      if (balance > 0) {
+        Swal.fire({
+          icon: 'info',
+          title: 'Saldo de tu cuenta:',
+          text: balance + ' ETH',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 5000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+      } else {
+        Swal.fire({
+          icon: 'warning',
+          title: 'El saldo de tu cuenta es de: ' + balance + ' ETH',
+          text: 'No tienes fondos suficientes para registrar pero si puedes validar',
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          showCloseButton: true,
+        });
+      }
+    };
     const number = await contract.methods.numbersCADs().call();
-    console.log("Número de certificados registrados: " + number);
     this.setState({ numberOfRegistrations: number });
   };
 
@@ -116,10 +143,19 @@ class App extends Component {
       Swal.fire({
         title: 'Espere...',
         html: '<b>Confirmar</b> la transacción y esperar el mensaje de confirmación (esto tomará un tiempo)... <br />',
-        allowEscapeKey: false,
-        allowOutsideClick: false,
         didOpen: () => {
           Swal.showLoading()
+        },
+        allowOutsideClick: () => {
+          const popup = Swal.getPopup()
+          popup.classList.remove('swal2-show')
+          setTimeout(() => {
+            popup.classList.add('animate__animated', 'animate__headShake')
+          })
+          setTimeout(() => {
+            popup.classList.remove('animate__animated', 'animate__headShake')
+          }, 500)
+          return false
         }
       });
       try {
@@ -247,15 +283,21 @@ class App extends Component {
         fileReader.readAsBinaryString(file);
 
         fileReader.onload = () => {
-          // console.log(fileReader.result);
-
           // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
           const hash256File = sha256(fileReader.result);
           this.setState({ storageHashCAD: hash256File });
-          // console.log(hash256File);
         }
 
         fileReader.onerror = () => {
+          Swal.fire({
+            title: 'Error',
+            icon: 'error',
+            text: fileReader.error,
+            allowEscapeKey: false,
+            allowOutsideClick: false,
+            confirmButtonText:
+              '<a href="../">Aceptar</a>',
+          });
           console.log(fileReader.error);
         }
       } else {
@@ -274,21 +316,54 @@ class App extends Component {
     // Se compruba la conexión con web3
     if (!this.state.web3) {
       return (
-        <div className="row center">
-          <div className="col s12">
-            <div className="card">
+        <div className="container row">
+          <div className="col m2 hide-on-small-and-down"></div>
+          <div className="col s12 m8">
+            <div className="alert card amber lighten-4 brown-text hide-on-small-and-down">
+              <div className="close">
+                <i data-dismiss="alert" aria-label="Close" className="fas fa-times"></i>
+              </div>
               <div className="card-content">
-                <img className='img-result' src={loading} alt="Cargando Web3, cuentas, y contrato..." /> <br />
-                <span className="second-title-cost">Cargando Web3, cuentas, y contrato...</span>
-                <p className="hide-on-small-and-down">
-                  Compruebe que su navegador sea <strong>Chrome</strong>  o <strong>Firefox</strong>. <br />
-                  Tener instalado la extensión <strong>MetaMask</strong> (<strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), <br /> más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
+                <p>
+                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  Compruebe que su navegador sea <strong>Chrome</strong> o <strong>Firefox</strong>.
                 </p>
-                <p className="show-on-small show-on-medium hide-on-med-and-up">Debe ingresar por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.</p>
-                <p>Y estar conectado a la red <strong>Rinkeby</strong></p>
+              </div>
+            </div>
+            <div className="alert card amber lighten-4 brown-text hide-on-small-and-down">
+              <div className="close">
+                <i data-dismiss="alert" aria-label="Close" className="fas fa-times"></i>
+              </div>
+              <div className="card-content">
+                <p>
+                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  Tener instalado la extensión <strong>MetaMask</strong> (<strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
+                </p>
+              </div>
+            </div>
+            <div className="alert card amber lighten-4 brown-text show-on-small show-on-medium hide-on-med-and-up">
+              <div className="close">
+                <i data-dismiss="alert" aria-label="Close" className="fas fa-times"></i>
+              </div>
+              <div className="card-content">
+                <p>
+                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  Si está intentando ingresar desde el navegador de su móvil, hágalo por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
+                </p>
+              </div>
+            </div>
+            <div className="alert card amber lighten-4 brown-text">
+              <div className="close">
+                <i data-dismiss="alert" aria-label="Close" className="fas fa-times"></i>
+              </div>
+              <div className="card-content">
+                <p>
+                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>Estar conectado a la red <strong>Rinkeby</strong>
+                </p>
               </div>
             </div>
           </div>
+          <div className="col m2 hide-on-small-and-down"></div>
         </div>
       )
     }
