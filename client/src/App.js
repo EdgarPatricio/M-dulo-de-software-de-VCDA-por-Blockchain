@@ -18,7 +18,12 @@ import invalid from './img/invalid.svg';
 class App extends Component {
 
   state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: null, balance: null };
-
+  constructor(props) {
+    super(props);
+    // create a ref to store the textInput DOM element
+    this.fileInput = React.createRef();
+    this.textFileInput = React.createRef();
+  }
   componentDidMount = async () => {
     Swal.fire({
       title: 'Cargando...',
@@ -193,7 +198,6 @@ class App extends Component {
     // Se actualiza el estado del número de registros para mostrar en pantalla
     const number = await contract.methods.numbersCADs().call();
     this.setState({ numberOfRegistrations: number });
-
   };
 
   // Función para obtener los valores de los inputs en el formulario
@@ -267,64 +271,38 @@ class App extends Component {
     this.setState({ storageHashCAD: "" });
     this.setState({ validate: null });
   };
-
-  render() {
-    const isOwner = this.state.isDeploymentOwner
-    const isValide = this.state.validate;
-    const div_register = this.state.showRegister;
-    const div_validate = this.state.showValidate;
-
-    // Método para leer el documento en formato PDF
-    const readFile = (e) => {
+  // Método para leer el documento en formato PDF
+  readFile = (e) => {
+    const input = this.fileInput.current;
+    const inputTextFile = this.textFileInput.current;
+    const extValidate = /(.pdf)$/i;
+    if (!extValidate.exec(input.value)) {
+      inputTextFile.classList.remove('invalid');
+      inputTextFile.classList.add('invalid');
+      this.setState({ storageHashCAD: "" });
+    } else {
+      inputTextFile.classList.remove('invalid');
+      inputTextFile.classList.add('valid');
       const file = e.target.files[0];
       if (!file) return;
 
-      if (file.type === "application/pdf") {
+      const fileReader = new FileReader();
 
-        const fileReader = new FileReader();
+      // El formato al que se convierte el terxto es a un String binario
+      fileReader.readAsBinaryString(file);
 
-        // El formato al que se convierte el terxto es a un String binario
-        fileReader.readAsBinaryString(file);
+      fileReader.onload = () => {
+        // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
+        const hash256File = sha256(fileReader.result);
+        this.setState({ storageHashCAD: hash256File });
+      }
 
-        fileReader.onload = () => {
-          // El algoritmo de función hash criptográfica seleccionado es el SHA256 o HASH256
-          const hash256File = sha256(fileReader.result);
-          this.setState({ storageHashCAD: hash256File });
-        }
-
-        fileReader.onerror = () => {
-          Swal.fire({
-            title: 'Error',
-            icon: 'error',
-            text: fileReader.error,
-            allowEscapeKey: false,
-            allowOutsideClick: false,
-            confirmButtonText: 'Aceptar',
-            allowOutsideClick: () => {
-              const popup = Swal.getPopup()
-              popup.classList.remove('swal2-show')
-              setTimeout(() => {
-                popup.classList.add('animate__animated', 'animate__headShake')
-              })
-              setTimeout(() => {
-                popup.classList.remove('animate__animated', 'animate__headShake')
-              }, 500)
-              return false
-            }
-          }).then((result) => {
-            if (result.isConfirmed) {
-              window.location.reload(true);
-            }
-          });
-          console.log(fileReader.error);
-        }
-      } else {
+      fileReader.onerror = () => {
         Swal.fire({
           title: 'Error',
           icon: 'error',
-          text: 'El archivo seleccionado no es un PDF',
+          text: fileReader.error,
           allowEscapeKey: false,
-          allowOutsideClick: false,
           confirmButtonText: 'Aceptar',
           allowOutsideClick: () => {
             const popup = Swal.getPopup()
@@ -342,9 +320,13 @@ class App extends Component {
             window.location.reload(true);
           }
         });
+        console.log(fileReader.error);
       }
+    }
+  };
 
-    };
+  render() {
+
     // Se compruba la conexión con web3
     if (!this.state.web3) {
       return (
@@ -357,7 +339,7 @@ class App extends Component {
               </div>
               <div className="card-content">
                 <p>
-                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  <i className="fas fa-exclamation-circle"></i> <span>Atención:</span>
                   Compruebe que su navegador sea <strong>Chrome</strong> o <strong>Firefox</strong>.
                 </p>
               </div>
@@ -368,7 +350,7 @@ class App extends Component {
               </div>
               <div className="card-content">
                 <p>
-                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  <i className="fas fa-exclamation-circle"></i> <span>Atención:</span>
                   Tener instalado la extensión <strong>MetaMask</strong> (<strong>iniciar sesión</strong> o <strong>crear cuenta</strong>), más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
                 </p>
               </div>
@@ -379,7 +361,7 @@ class App extends Component {
               </div>
               <div className="card-content">
                 <p>
-                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>
+                  <i className="fas fa-exclamation-circle"></i> <span>Atención:</span>
                   Si está intentando ingresar desde el navegador de su móvil, hágalo por medio de la aplicación móvil de MetaMask, más información <a href="https://metamask.io/" target="_blank" rel="noopener noreferrer">aquí</a>.
                 </p>
               </div>
@@ -390,7 +372,7 @@ class App extends Component {
               </div>
               <div className="card-content">
                 <p>
-                  <i class="fas fa-exclamation-circle"></i> <span>Atención:</span>Estar conectado a la red <strong>Rinkeby</strong>
+                  <i className="fas fa-exclamation-circle"></i> <span>Atención:</span>Estar conectado a la red <strong>Rinkeby</strong>
                 </p>
               </div>
             </div>
@@ -407,7 +389,7 @@ class App extends Component {
           <br />
         </div>
         <div className="row">
-          {div_register === true && isOwner === true &&
+          {this.state.showRegister === true && this.state.isDeploymentOwner === true &&
             <div className="row">
               <div className="col s12 m6">
                 <ul className="tabs container-one">
@@ -417,7 +399,7 @@ class App extends Component {
               </div>
             </div>
           }
-          {div_validate === true && isOwner === true &&
+          {this.state.showValidate === true && this.state.isDeploymentOwner === true &&
             <div className="row">
               <div className="col s12 m6">
                 <ul className="tabs container-one">
@@ -435,28 +417,32 @@ class App extends Component {
 
           <div className="row container-two">
             {/* Sección de registro de CAD */}
-            {div_register === true &&
+            {this.state.showRegister === true &&
               <div className="col s12 m6">
                 <div className="row">
                   <div className="input-field">
                     <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
                     <label className="active">Número de DNI:</label>
-                  </div>
-                  <div className="input-field">
-                    <label className="active">Hash del documento: {this.state.storageHashCAD}</label><br />
+                    <span className="helper-text">Ingrese el número de DNI</span>
                   </div>
                   <div className="file-field input-field">
                     <div className="btn">
                       <span>Subir archivo</span>
-                      <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
+                      <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
                     </div>
                     <div className="file-path-wrapper">
-                      <input className="file-path validate" placeholder="Subir el certificado académico digital en formato PDF" type="text" />
+                      <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
+                      <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
                     </div>
                   </div>
+                  {this.state.storageHashCAD !== "" &&
+                    <div className="input-field">
+                      <span className="helper-text"><i className="fas fa-info-circle"></i> SHA-256 del certificado: {this.state.storageHashCAD}</span>
+                    </div>
+                  }
                 </div>
                 <div className="center">
-                  <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" onClick={this.handleSubmit}>Registrar en Blockchain</button>
+                  <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleSubmit}>Registrar en Blockchain</button>
                 </div>
                 <div className="alert card blue lighten-4 blue-text text-darken-3">
                   <div className="card-content">
@@ -469,25 +455,27 @@ class App extends Component {
             }
 
             {/* Sección de validación de CAD */}
-            {div_validate === true &&
+            {this.state.showValidate === true &&
               <div className="col s12 m6">
                 <div className="row">
                   <div className="input-field">
                     <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
                     <label className="active">Número de DNI:</label>
+                    <span className="helper-text">Ingrese el número de DNI</span>
                   </div>
                   <div className="file-field input-field">
                     <div className="btn">
                       <span>Subir archivo</span>
-                      <input type="file" name="inputfile" multiple={false} onChange={readFile} accept=".pdf" />
+                      <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
                     </div>
                     <div className="file-path-wrapper">
-                      <input className="file-path validate" placeholder="Subir el certificado académico digital en formato PDF" type="text" />
+                      <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
+                      <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
                     </div>
                   </div>
                 </div>
                 <div className="center">
-                  <button type="button" data-test-id="test-button-validate" className="btn btnBlueUNL" onClick={this.handleValidate}>Validar</button>
+                  <button type="button" data-test-id="test-button-validate" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleValidate}>Validar</button>
                 </div>
               </div>
             }
@@ -495,7 +483,7 @@ class App extends Component {
             <div className="col s12 m1 verticalLine hide-on-small-and-down"></div>
 
             {/* Sección de inicio indicando que el sistema está listo */}
-            {isValide === null &&
+            {this.state.validate === null &&
               <div className="col s12 m4 center">
                 <div className="card-content">
                   <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
@@ -505,7 +493,7 @@ class App extends Component {
             }
 
             {/* Sección de validación positiva de CAD */}
-            {isValide === true &&
+            {this.state.validate === true &&
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
@@ -524,7 +512,7 @@ class App extends Component {
               </div>
             }
             {/* Sección de validación negativa de CAD */}
-            {isValide === false &&
+            {this.state.validate === false &&
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
@@ -544,7 +532,7 @@ class App extends Component {
             }
           </div>
         </div>
-      </div>
+      </div >
     );
   }
 }

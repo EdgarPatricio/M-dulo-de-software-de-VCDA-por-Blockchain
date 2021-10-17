@@ -3,13 +3,13 @@
 
 <head>
     <meta charset="utf-8" />
-    <link rel="icon" type="image/jpg" href="%PUBLIC_URL%/images/logoUNL.jpg" />
+    <link rel="icon" type="image/jpg" href="%PUBLIC_URL%/favicon.ico" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#000000" />
     <meta name="description"
         content="Website that aims to register and validate the academic digital certificates of the Events system of the National University of Loja." />
-    <link rel="apple-touch-icon" href="logo192.png" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/images/logoUNL.jpg" />
     <!--
       manifest.json proporciona los metadatos que se utilizan cuando su aplicación web se instala en un en el dispositivo móvil o en el ordenador de un usuario. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
@@ -82,8 +82,8 @@
     <div id="nav">
         <nav class="white nav-tabs shadown-none">
             <div class="nav-wrapper container">
-                <a href="/" class="brand-logo left black-text animated bounceInLeft nav-tabs"><img
-                        style="height:70px;margin:9px 0" src="./images/unl.png" alt="">
+                <a href="/" class="brand-logo left black-text animated bounceInLeft nav-tabs">
+                    <img src="./images/unl.png" alt="">
                 </a>
                 <a id="menuHome" href="#" data-target="slide-out" class="sidenav-trigger show-on-small"><i
                         class="fas fa-bars menu"></i></a>
@@ -101,7 +101,7 @@
     <!--
         Contenido que se maneja con React
     -->
-    <main>
+    <main id="main">
         <div id="root"></div>
     </main>
 
@@ -327,9 +327,20 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js"
         integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/"
         crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/3.1.9/crypto-js.min.js"
-        integrity="sha512-Zl1k/bs5R0zzwAw+kxzMh4HjpC2Y2fy8Qu8xoUUA4mXTYtgq6oWtLUUMSRiaJZ/hH0hwE7locgWLozvskZrnvw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+        window.onscroll = function (ev) {
+            var navfixed = document.getElementById("nav");
+            var main = document.getElementById("main");
+            if (window.scrollY > 64) {
+                navfixed.classList.add('nav-fixed-scroll');
+                main.style.cssText = 'margin-top:64px';
+            }
+            else {
+                navfixed.classList.remove('nav-fixed-scroll');
+                main.style.cssText = 'margin-top:0';
+            }
+        };
+    </script>
 </body>
 
 </html>
