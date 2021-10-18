@@ -17,12 +17,14 @@ import invalid from './img/invalid.svg';
 
 class App extends Component {
 
-  state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: null, balance: null };
+  state = { storageDNI: "", storageHashCAD: "", validate: null, showValidate: true, showRegister: false, numberOfRegistrations: 0, web3: null, accounts: null, contract: null, isDeploymentOwner: null, balance: null, addressContract: null };
   constructor(props) {
     super(props);
     // create a ref to store the textInput DOM element
     this.fileInput = React.createRef();
     this.textFileInput = React.createRef();
+    this.textLabelDNI = React.createRef();
+    this.cardValidate = React.createRef();
   }
   componentDidMount = async () => {
     Swal.fire({
@@ -60,6 +62,9 @@ class App extends Component {
         deployedNetwork && deployedNetwork.address,
       );
 
+      // Obtener la dirección del contrato
+      const addressContract = deployedNetwork.address.toString();
+
       // Obtener el saldo de la cuenta con la que se generará las transacciones
       const balance = await web3.eth.getBalance(accounts[0]);
       const balanceETHER = web3.utils.fromWei(balance, 'ether');
@@ -74,7 +79,7 @@ class App extends Component {
 
       // Establece el estado de web3, cuentas y contrato, y luego procede
       // con la interacción del método del contrato para conocer el número de registros
-      this.setState({ web3, accounts, contract: instanceContract, balance: balanceETHER }, this.run);
+      this.setState({ web3, accounts, contract: instanceContract, balance: balanceETHER, addressContract: addressContract }, this.run);
     } catch (error) {
       // Captura de errores para cualquiera de las operaciones anteriores.
       Swal.fire({
@@ -82,7 +87,7 @@ class App extends Component {
         title: '¡Atención!',
         html: 'No se ha podido cargar',
         timer: 3000,
-        showConfirmButton: false,
+        showConfirmButton: false
       });
       console.error(error);
     }
@@ -172,6 +177,7 @@ class App extends Component {
           text: 'El certificado académico digital se registró en la red Blockchain con éxito',
           confirmButtonText: 'Aceptar',
         });
+        this.resetForm();
         console.log(result);
       } catch (error) {
         Swal.fire({
@@ -180,9 +186,9 @@ class App extends Component {
           html: 'Error al registrar el certificado académico digital <br />' +
             'Inténtelo más tarde o revise el siguiente mensaje:' +
             '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
-            '<span style="color:red">Error: </span>(' +
-            error.message + ')',
-          confirmButtonText: 'Aceptar',
+            '<span style="color:red">Error: </span>' +
+            error.message,
+          confirmButtonText: 'Aceptar'
         });
       };
 
@@ -239,16 +245,19 @@ class App extends Component {
           title: 'Validación de autenticidad realizada, observe el resultado en pantalla'
         });
         this.setState({ validate: response });
+        const card = this.cardValidate.current;
+        card.classList.add('animate__animated', 'animate__backInRight');
+        setTimeout(() => card.classList.remove('animate__animated', 'animate__backInRight'), 1000);
       } catch (error) {
         Swal.fire({
           icon: 'warning',
           title: '¡Atención!',
-          html: 'Error al registrar el certificado académico digital <br />' +
+          html: 'Error al validar el certificado académico digital <br />' +
             'Inténtelo más tarde o revise el siguiente mensaje:' +
             '<hr style="border:1px dashed #dfdfdf; width:90%"></hr>' +
-            '<span style="color:red">Error: </span>(' +
-            error.message + ')',
-          confirmButtonText: 'Aceptar',
+            '<span style="color:red">Error: </span>' +
+            error.message,
+          confirmButtonText: 'Aceptar'
         });
       };
     }
@@ -324,10 +333,18 @@ class App extends Component {
       }
     }
   };
+  resetForm = () => {
+    this.myFormRef.reset();
+    this.setState({ storageDNI: "" });
+    this.setState({ storageHashCAD: "" });
+    this.textLabelDNI.current.classList.add('active');
+    this.setState({ validate: null });
+  };
 
   render() {
+    let urlAddressContract = "https://rinkeby.etherscan.io/address/" + this.state.addressContract;
 
-    // Se compruba la conexión con web3
+    // Se comprueba la conexión con web3
     if (!this.state.web3) {
       return (
         <div className="container row">
@@ -417,66 +434,68 @@ class App extends Component {
 
           <div className="row container-two">
             {/* Sección de registro de CAD */}
-            {this.state.showRegister === true &&
+            {this.state.showRegister === true && this.state.isDeploymentOwner === true &&
               <div className="col s12 m6">
-                <div className="row">
-                  <div className="input-field">
-                    <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
-                    <label className="active">Número de DNI:</label>
-                    <span className="helper-text">Ingrese el número de DNI</span>
-                  </div>
-                  <div className="file-field input-field">
-                    <div className="btn">
-                      <span>Subir archivo</span>
-                      <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
-                    </div>
-                    <div className="file-path-wrapper">
-                      <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
-                      <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
-                    </div>
-                  </div>
-                  {this.state.storageHashCAD !== "" &&
+                <form ref={(el) => this.myFormRef = el}>
+                  <div className="row">
                     <div className="input-field">
-                      <span className="helper-text"><i className="fas fa-info-circle"></i> SHA-256 del certificado: {this.state.storageHashCAD}</span>
+                      <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
+                      <label className="active" ref={this.textLabelDNI}>Número de DNI:</label>
+                      <span className="helper-text">Ingrese el número de DNI</span>
                     </div>
-                  }
-                </div>
-                <div className="center">
-                  <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleSubmit}>Registrar en Blockchain</button>
-                </div>
+                    <div className="file-field input-field">
+                      <div className="btn">
+                        <span>Subir archivo</span>
+                        <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
+                      </div>
+                      <div className="file-path-wrapper">
+                        <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
+                        <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
+                      </div>
+                    </div>
+                    {this.state.storageHashCAD !== "" &&
+                      <div className="input-field">
+                        <span className="helper-text"><i className="fas fa-info-circle"></i> SHA-256 del certificado: {this.state.storageHashCAD}</span>
+                      </div>
+                    }
+                  </div>
+                  <div className="center">
+                    <button type="button" data-test-id="test-button-register" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleSubmit}>Registrar en Blockchain</button>
+                  </div>
+                </form>
                 <div className="alert card blue lighten-4 blue-text text-darken-3">
                   <div className="card-content">
                     <p><i className="fas fa-info-circle"></i> <span>Información:</span> Actualmente existen <span>{this.state.numberOfRegistrations}</span>certificados académicos digitales registrados en la red Rinkeby de Ethereum.</p>
                   </div>
                 </div>
-                <p></p>
-                <p></p>
               </div>
             }
 
             {/* Sección de validación de CAD */}
             {this.state.showValidate === true &&
               <div className="col s12 m6">
-                <div className="row">
-                  <div className="input-field">
-                    <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
-                    <label className="active">Número de DNI:</label>
-                    <span className="helper-text">Ingrese el número de DNI</span>
-                  </div>
-                  <div className="file-field input-field">
-                    <div className="btn">
-                      <span>Subir archivo</span>
-                      <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
+                <form ref={(el) => this.myFormRef = el}>
+                  <div className="row">
+                    <div className="input-field">
+                      <input id="dni" type="text" name="storageDNI" value={this.state.storageDNI} onChange={this.handleInputChange} />
+                      <label className="active" ref={this.textLabelDNI}>Número de DNI:</label>
+                      <span className="helper-text">Ingrese el número de DNI</span>
                     </div>
-                    <div className="file-path-wrapper">
-                      <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
-                      <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
+                    <div className="file-field input-field">
+                      <div className="btn">
+                        <span>Subir archivo</span>
+                        <input type="file" name="inputfile" ref={this.fileInput} multiple={false} onChange={this.readFile} accept=".pdf" />
+                      </div>
+                      <div className="file-path-wrapper">
+                        <input className="file-path" ref={this.textFileInput} placeholder="No se ha elegido ningún archivo" type="text" />
+                        <span className="helper-text" data-error="El certificado seleccionado debe ser un archivo PDF" data-success="El certificado seleccionado tiene el formato adecuado" >Subir el certificado académico digital en formato PDF</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div className="center">
-                  <button type="button" data-test-id="test-button-validate" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleValidate}>Validar</button>
-                </div>
+                  <div className="center">
+                    <button type="button" data-test-id="test-button-validate" className="btn btnBlueUNL" disabled={this.state.storageDNI === "" || this.state.storageHashCAD === ""} onClick={this.handleValidate}>Validar</button>
+                  </div>
+                </form>
               </div>
             }
             <div className="col s12 m1 hide-on-small-and-down"></div>
@@ -486,9 +505,16 @@ class App extends Component {
             {this.state.validate === null &&
               <div className="col s12 m4 center">
                 <div className="card-content">
-                  <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
-                  <span className="second-title-cost">El sistema está listo</span>
+                  <p>
+                    <img className='img-initial' src={initial} alt="El sistema está listo" /> <br />
+                    <span className="second-title-cost">El sistema está listo</span>
+                  </p>
                 </div>
+                {this.state.showRegister === true && this.state.isDeploymentOwner === true &&
+                  <div className="card-action">
+                    <a href={urlAddressContract} target="_blank" rel="noopener noreferrer">Visualizar las transacciones en Etherscan <i className="fas fa-external-link-alt"></i> </a>
+                  </div>
+                }
               </div>
             }
 
@@ -497,14 +523,14 @@ class App extends Component {
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
-                    <div className="card">
+                    <div className="card" ref={this.cardValidate}>
                       <div className="card-content">
                         <span className="">El certificado académico digital:</span> <br /> <br />
-                        <img className='img-result' src={valid} alt="" /> <br />
+                        <img className='img-result' src={valid} alt="Documento auténtico" /> <br />
                         <span className="second-title-cost">Es auténtico</span>
                       </div>
                       <div className="card-action">
-                        <a href="./">Validar otro documento</a>
+                        <button className="btn" onClick={this.resetForm}>Validar otro documento</button>
                       </div>
                     </div>
                   </div>
@@ -516,14 +542,14 @@ class App extends Component {
               <div className="col s12 m4 center">
                 <div className="row " >
                   <div className="col s12">
-                    <div className="card">
+                    <div className="card" ref={this.cardValidate}>
                       <div className="card-content">
                         <span className="">El certificado académico digital:</span> <br /> <br />
-                        <img className='img-result' src={invalid} alt="" /> <br />
+                        <img className='img-result' src={invalid} alt="Documento no auténctico" /> <br />
                         <span className="red-text-UNL">No es auténtico</span>
                       </div>
                       <div className="card-action">
-                        <a href="./">Validar otro documento</a>
+                        <button className="btn" onClick={this.resetForm}>Validar otro documento</button>
                       </div>
                     </div>
                   </div>
