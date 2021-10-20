@@ -2,42 +2,72 @@
 
 exports[`Pruebas unitarias a: <App /> Renderizar <App /> al no estar conectado a web3, cuentas, contrato o metamask  1`] = `
 <div
-  className="row center"
+  className="container row"
 >
   <div
-    className="col s12"
+    className="col m2 hide-on-small-and-down"
+  />
+  <div
+    className="col s12 m8"
   >
     <div
-      className="card"
+      className="alert card amber lighten-4 brown-text hide-on-small-and-down"
     >
+      <div
+        className="close"
+      >
+        <i
+          aria-label="Close"
+          className="fas fa-times"
+          data-dismiss="alert"
+        />
+      </div>
       <div
         className="card-content"
       >
-        <img
-          alt="Cargando Web3, cuentas, y contrato..."
-          className="img-result"
-          src="loading.svg"
-        />
-         
-        <br />
-        <span
-          className="second-title-cost"
-        >
-          Cargando Web3, cuentas, y contrato...
-        </span>
-        <p
-          className="hide-on-small-and-down"
-        >
+        <p>
+          <i
+            className="fas fa-exclamation-circle"
+          />
+           
+          <span>
+            Atención:
+          </span>
           Compruebe que su navegador sea 
           <strong>
             Chrome
           </strong>
-            o 
+           o 
           <strong>
             Firefox
           </strong>
-          . 
-          <br />
+          .
+        </p>
+      </div>
+    </div>
+    <div
+      className="alert card amber lighten-4 brown-text hide-on-small-and-down"
+    >
+      <div
+        className="close"
+      >
+        <i
+          aria-label="Close"
+          className="fas fa-times"
+          data-dismiss="alert"
+        />
+      </div>
+      <div
+        className="card-content"
+      >
+        <p>
+          <i
+            className="fas fa-exclamation-circle"
+          />
+           
+          <span>
+            Atención:
+          </span>
           Tener instalado la extensión 
           <strong>
             MetaMask
@@ -50,9 +80,7 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> al no estar conectado a
           <strong>
             crear cuenta
           </strong>
-          ), 
-          <br />
-           más información 
+          ), más información 
           <a
             href="https://metamask.io/"
             rel="noopener noreferrer"
@@ -62,21 +90,67 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> al no estar conectado a
           </a>
           .
         </p>
-        <p
-          className="show-on-small show-on-medium hide-on-med-and-up"
-        >
-          Debe ingresar por medio de la aplicación móvil de MetaMask, más información 
-          <a
-            href="https://metamask.io/"
-            rel="noopener noreferrer"
-            target="_blank"
-          >
-            aquí
-          </a>
-          .
-        </p>
+      </div>
+    </div>
+    <div
+      className="alert card amber lighten-4 brown-text show-on-small show-on-medium hide-on-med-and-up"
+    >
+      <div
+        className="close"
+      >
+        <i
+          aria-label="Close"
+          className="fas fa-times"
+          data-dismiss="alert"
+        />
+      </div>
+      <div
+        className="card-content"
+      >
         <p>
-          Y estar conectado a la red 
+          <i
+            className="fas fa-exclamation-circle"
+          />
+           
+          <span>
+            Atención:
+          </span>
+          Si está intentando ingresar desde el navegador de su móvil, hágalo por medio de la aplicación móvil de MetaMask, más información 
+          <a
+            href="https://metamask.io/"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            aquí
+          </a>
+          .
+        </p>
+      </div>
+    </div>
+    <div
+      className="alert card amber lighten-4 brown-text"
+    >
+      <div
+        className="close"
+      >
+        <i
+          aria-label="Close"
+          className="fas fa-times"
+          data-dismiss="alert"
+        />
+      </div>
+      <div
+        className="card-content"
+      >
+        <p>
+          <i
+            className="fas fa-exclamation-circle"
+          />
+           
+          <span>
+            Atención:
+          </span>
+          Estar conectado a la red 
           <strong>
             Rinkeby
           </strong>
@@ -84,6 +158,9 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> al no estar conectado a
       </div>
     </div>
   </div>
+  <div
+    className="col m2 hide-on-small-and-down"
+  />
 </div>
 `;
 
@@ -110,39 +187,6 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> correctamente al estar 
       <div
         className="col s12 m6"
       >
-        <ul
-          className="tabs container-one"
-        >
-          <li
-            className="tab col s6 active"
-          >
-            <button
-              className="active"
-              data-testid="btnChangeValidate"
-              onClick={[Function]}
-            >
-              Validar certificados
-            </button>
-          </li>
-          <li
-            className="tab col s6"
-          >
-            <button
-              data-testid="btnChangeRegister"
-              onClick={[Function]}
-            >
-              Registrar certificados
-            </button>
-          </li>
-        </ul>
-      </div>
-    </div>
-    <div
-      className="row"
-    >
-      <div
-        className="col s12"
-      >
         <span>
           Complete los campos correctamente:
         </span>
@@ -154,65 +198,80 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> correctamente al estar 
       <div
         className="col s12 m6"
       >
-        <div
-          className="row"
-        >
+        <form>
           <div
-            className="input-field"
-          >
-            <input
-              id="dni"
-              name="storageDNI"
-              onChange={[Function]}
-              type="text"
-              value=""
-            />
-            <label
-              className="active"
-            >
-              Número de DNI:
-            </label>
-          </div>
-          <div
-            className="file-field input-field"
+            className="row"
           >
             <div
-              className="btn"
+              className="input-field"
             >
-              <span>
-                Subir archivo
-              </span>
               <input
-                accept=".pdf"
-                multiple={false}
-                name="inputfile"
+                id="dni"
+                name="storageDNI"
                 onChange={[Function]}
-                type="file"
+                type="text"
+                value=""
               />
+              <label
+                className="active"
+              >
+                Número de DNI:
+              </label>
+              <span
+                className="helper-text"
+              >
+                Ingrese el número de DNI
+              </span>
             </div>
             <div
-              className="file-path-wrapper"
+              className="file-field input-field"
             >
-              <input
-                className="file-path validate"
-                placeholder="Subir el certificado académico digital en formato PDF"
-                type="text"
-              />
+              <div
+                className="btn"
+              >
+                <span>
+                  Subir archivo
+                </span>
+                <input
+                  accept=".pdf"
+                  multiple={false}
+                  name="inputfile"
+                  onChange={[Function]}
+                  type="file"
+                />
+              </div>
+              <div
+                className="file-path-wrapper"
+              >
+                <input
+                  className="file-path"
+                  placeholder="No se ha elegido ningún archivo"
+                  type="text"
+                />
+                <span
+                  className="helper-text"
+                  data-error="El certificado seleccionado debe ser un archivo PDF"
+                  data-success="El certificado seleccionado tiene el formato adecuado"
+                >
+                  Subir el certificado académico digital en formato PDF
+                </span>
+              </div>
             </div>
           </div>
-        </div>
-        <div
-          className="center"
-        >
-          <button
-            className="btn btnBlueUNL"
-            data-test-id="test-button-validate"
-            onClick={[Function]}
-            type="button"
+          <div
+            className="center"
           >
-            Validar
-          </button>
-        </div>
+            <button
+              className="btn btnBlueUNL"
+              data-test-id="test-button-validate"
+              disabled={true}
+              onClick={[Function]}
+              type="button"
+            >
+              Validar
+            </button>
+          </div>
+        </form>
       </div>
       <div
         className="col s12 m1 hide-on-small-and-down"
@@ -226,18 +285,20 @@ exports[`Pruebas unitarias a: <App /> Renderizar <App /> correctamente al estar 
         <div
           className="card-content"
         >
-          <img
-            alt="El sistema está listo"
-            className="img-initial"
-            src="data-security.svg"
-          />
-           
-          <br />
-          <span
-            className="second-title-cost"
-          >
-            El sistema está listo
-          </span>
+          <p>
+            <img
+              alt="El sistema está listo"
+              className="img-initial"
+              src="data-security.svg"
+            />
+             
+            <br />
+            <span
+              className="second-title-cost"
+            >
+              El sistema está listo
+            </span>
+          </p>
         </div>
       </div>
     </div>

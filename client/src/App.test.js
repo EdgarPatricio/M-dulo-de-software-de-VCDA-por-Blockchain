@@ -22,8 +22,8 @@ describe('Pruebas unitarias a: <App />', () => {
   beforeEach(() => {
     wrapperNoConnection = shallow(<App />);
     wrapperConnection = shallow(<App />).setState(stateConecction);
-    stateShowValidate = { web3: true, showRegister: false, showValidate: true };
-    stateShowRegister = { web3: true, showRegister: true, showValidate: false };
+    stateShowValidate = { web3: true, showRegister: false, showValidate: true , isDeploymentOwner: true};
+    stateShowRegister = { web3: true, showRegister: true, showValidate: false , isDeploymentOwner: true};
     stateCDAIsAuthentic = { web3: true, showRegister: false, showValidate: true, validate: true };
     stateCDAIsNoAuthentic = { web3: true, showRegister: false, showValidate: true, validate: false };
     stateRegisterCDA = {
@@ -64,7 +64,7 @@ describe('Pruebas unitarias a: <App />', () => {
   test('Mostrar formulario para registrar un CDA', () => {
     const wrapper = shallow(<App />).setState(stateShowRegister);
     const counterText = wrapper.find('button').at(2).text().trim();
-    expect(wrapper.contains(<input className="file-path validate" placeholder="Subir el certificado académico digital en formato PDF" type="text" />)).toEqual(true);
+    expect(wrapper.contains(<input className="file-path" placeholder="No se ha elegido ningún archivo" type="text"/>)).toEqual(true);
     expect(counterText).toBe('Registrar en Blockchain');
     expect(wrapper.find('button').at(0).hasClass('active')).toEqual(false);
     expect(wrapper.find('button').at(1).hasClass('active')).toEqual(true);
@@ -72,13 +72,13 @@ describe('Pruebas unitarias a: <App />', () => {
 
   test('Mostrar el mensaje adecuado cuando el CDA es autentico', () => {
     let wrapper = shallow(<App />).setState(stateCDAIsAuthentic);
-    const counterText = wrapper.find('span').at(3).text().trim();
+    const counterText = wrapper.find('span').at(5).text().trim();
     expect(counterText).toBe('Es auténtico');
   });
 
   test('Mostrar el mensaje adecuado cuando el CDA no es autentico', () => {
     let wrapper = shallow(<App />).setState(stateCDAIsNoAuthentic);
-    const counterText = wrapper.find('span').at(3).text().trim();
+    const counterText = wrapper.find('span').at(5).text().trim();
     expect(counterText).toBe('No es auténtico');
   });
 
@@ -124,12 +124,10 @@ describe('Pruebas unitarias a: <App />', () => {
     expect(handleChangeRegister.mock.calls.length).toEqual(1);
   });
 
-  test('Mostrar input para la función leer PDF', () => {
-    const wrapper = shallow(<App />).setState(stateConecction);
-    expect(wrapper.contains(<input
-      className="file-path validate"
-      placeholder="Subir el certificado académico digital en formato PDF"
-      type="text"
-    />)).toEqual(true);
+  test('Llamar a la función readFile()', () => {
+    const wrapper = mount(<App />).setState(stateValidateCDA);
+    const instance = wrapper.instance();
+    jest.spyOn(instance, 'readFile')
+    expect(instance.readFile).toHaveBeenCalledTimes(0);
   });
 });

@@ -34,6 +34,7 @@ class App extends Component {
       didOpen: () => {
         Swal.showLoading()
       },
+      backdrop:true,
       allowOutsideClick: () => {
         const popup = Swal.getPopup()
         popup.classList.remove('swal2-show')
@@ -157,6 +158,7 @@ class App extends Component {
         didOpen: () => {
           Swal.showLoading()
         },
+        backdrop:true,
         allowOutsideClick: () => {
           const popup = Swal.getPopup()
           popup.classList.remove('swal2-show')
@@ -313,6 +315,7 @@ class App extends Component {
           text: fileReader.error,
           allowEscapeKey: false,
           confirmButtonText: 'Aceptar',
+          backdrop:true,
           allowOutsideClick: () => {
             const popup = Swal.getPopup()
             popup.classList.remove('swal2-show')
