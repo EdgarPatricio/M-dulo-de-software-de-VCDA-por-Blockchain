@@ -11,7 +11,7 @@ _El proyecto tiene por objetivo implementar un módulo de software para la valid
 - [Ejecutando las pruebas](#ejecutando-las-pruebas-%EF%B8%8F).
   - [Pruebas unitarias subsistema de contratos inteligentes](#analizar-las-pruebas-unitarias-en-el-subsistema-de-contratos-inteligentes-).
   - [Pruebas unitarias subsistema de aplicaciones](#analizar-las-pruebas-unitarias-en-el-subsistema-de-contratos-inteligentes-).
-  - [Pruebas de integración](#analizar-las-pruebas-de-integración-).
+  - [Pruebas de integración](#analizar-las-pruebas-de-integración-%EF%B8%8F).
 - [Construcción](#construido-con-%EF%B8%8F)
 - [Autores](#autores-%EF%B8%8F)
 - [Licencia](#licencia-)
